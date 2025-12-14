@@ -22,7 +22,7 @@ def main():
     cells = slicer.slice(img, (13, 22))
     writer = Writer()
     writer.assign_char_templates(chars)
-    converted = writer.match_cells(cells, w, h)
+    converted = writer.match_cells(cells, w, h)[0]
     converted = invert_image(converted)
     converted = floor_fill(converted, seed_point, 0)
     cv2.imwrite(save_path, converted)

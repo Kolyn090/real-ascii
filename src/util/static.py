@@ -26,6 +26,31 @@ def resize_nearest_neighbor(img: np.ndarray,
     resized = cv2.resize(img, new_size, interpolation=cv2.INTER_NEAREST)
     return resized
 
+def resize_bilinear(img: np.ndarray,
+                            factor: int) -> np.ndarray:
+    scale = factor
+    new_width = int(img.shape[1] * scale)
+    new_height = int(img.shape[0] * scale)
+    new_size = (new_width, new_height)
+    resized = cv2.resize(img, new_size, interpolation=cv2.INTER_LINEAR)
+    return resized
+
+def increase_contrast(img: np.ndarray,
+                      contrast_factor: float,
+                      window_size=(8, 8)) -> np.ndarray:
+    lab = cv2.cvtColor(img, cv2.COLOR_BGR2LAB)
+    l, a, b = cv2.split(lab)
+
+    clahe = cv2.createCLAHE(clipLimit=contrast_factor, tileGridSize=window_size)
+    cl = clahe.apply(l)
+
+    lab_clahe = cv2.merge((cl, a, b))
+    contrast_img = cv2.cvtColor(lab_clahe, cv2.COLOR_LAB2BGR)
+    return contrast_img
+
+def to_grayscale(img: np.ndarray) -> np.ndarray:
+    return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+
 def test():
     img_path = '../f_input/prof.jpg'
     img = cv2.imread(img_path)

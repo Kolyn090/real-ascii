@@ -26,7 +26,7 @@ class Slicer:
 
         # Run multithreaded slicing
         result = []
-        with ThreadPoolExecutor(max_workers=8) as executor:
+        with ThreadPoolExecutor(max_workers=16) as executor:
             for top_left, crop in executor.map(self.slice_one, tasks):
                 cell = Cell()
                 cell.top_left = top_left
