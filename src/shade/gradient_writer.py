@@ -1,3 +1,4 @@
+import math
 import os
 import cv2
 import sys
@@ -13,6 +14,8 @@ from slicer import Cell, Slicer  # type: ignore
 
 class GradientWriter:
     def __init__(self):
+        self.save_to_folder = False
+        self.save_folder = ""
         self.gradient_imgs: list[np.ndarray] = []
         self.templates: list[list[str]] = []
         self.matched: list[np.ndarray] = []
@@ -28,8 +31,8 @@ class GradientWriter:
             writer.assign_char_templates(self.templates[i])
             img = self.gradient_imgs[i]
             # img[img == 0] = 255
-            # img = invert_image(img)
-            cv2.imwrite(f"p_img_{i}.png", img)
+            img = invert_image(img)
+            self._save_img(f"divided_{i}.png", img)
             slicer = Slicer()
             cells = slicer.slice(img, (13, 22))
             h, w = img.shape[:2]
@@ -40,10 +43,38 @@ class GradientWriter:
 
         with ThreadPoolExecutor(max_workers=16) as executor:
             list(executor.map(lambda cell: self.paste_to_img(cell, result_img), stacks))
+
         # result_img = invert_image(result_img)
-        seed_point = (w - 1, h - 1)
-        result_img = floor_fill(result_img, seed_point, 255)
-        cv2.imwrite("test.png", result_img)
+        # seed_point = (w - 1, h - 1)
+        # result_img = floor_fill(result_img, seed_point, 255)
+        result_img = invert_image(result_img)
+        result_img = result_img[0:math.floor(h / 22) * 22, 0:math.floor(w / 13) * 13]
+        self._save_img("test.png", result_img)
+
+        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
+        # with ThreadPoolExecutor(max_workers=16) as executor:
+        #     list(executor.map(lambda cell: self.paste_to_img(cell, result_img), p_ct_lists[0]))
+        # self._save_img("test_0.png", result_img)
+        #
+        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
+        # with ThreadPoolExecutor(max_workers=16) as executor:
+        #     list(executor.map(lambda cell: self.paste_to_img(cell, result_img), p_ct_lists[1]))
+        # self._save_img("test_1.png", result_img)
+        #
+        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
+        # with ThreadPoolExecutor(max_workers=16) as executor:
+        #     list(executor.map(lambda cell: self.paste_to_img(cell, result_img), p_ct_lists[2]))
+        # self._save_img("test_2.png", result_img)
+        #
+        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
+        # with ThreadPoolExecutor(max_workers=16) as executor:
+        #     list(executor.map(lambda cell: self.paste_to_img(cell, result_img), p_ct_lists[3]))
+        # self._save_img("test_3.png", result_img)
+        #
+        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
+        # with ThreadPoolExecutor(max_workers=16) as executor:
+        #     list(executor.map(lambda cell: self.paste_to_img(cell, result_img), p_ct_lists[4]))
+        # self._save_img("test_4.png", result_img)
 
     @staticmethod
     def paste_to_img(p_ct: PositionalCharTemplate, result_img: np.ndarray):
@@ -100,38 +131,49 @@ class GradientWriter:
         # Force space to have the lowest rank
         self.template_rank[" "] = -1
 
+    def _save_img(self, img_name: str, img: np.ndarray):
+        if self.save_to_folder:
+            cv2.imwrite(os.path.join(self.save_folder, img_name), img)
+
 def test():
-    factor = 8
-    img_path = '../f_input/prof.jpg'
-    save_folder = 'test'
+    factor = 10
+    img_path = '../f_input/ultraman-nexus.png'
+    save_folder = 'test_writer'
     save_to_folder = True
     templates = [
-        [".", ",", "-", "_", "^", "'"],
-        [":", ";", "!", "i"],
+        [" "],
+        [" ", ".", ",", "-", "_", "^", "'"],
+        [" ", ":", ";", "!", "i"],
         ["+", "=", "*", "l", "[", "]", "~"],
         ["%", "&", "8", "B"],
         ["W", "M", "@", "$", "#"]
     ]
     img = cv2.imread(img_path)
-    img = increase_contrast(img, 2)
-    img = to_grayscale(img)
+    # img = increase_contrast(img, 2)
+    if save_folder:
+        cv2.imwrite(os.path.join(save_folder, "original_img.png"), img)
+
     img = resize_bilinear(img, factor)
-    # img = smooth_colors(img, sigma_s=60, sigma_r=0.08)
+    img = smooth_colors(img, sigma_s=1, sigma_r=0.6)
+    img = to_grayscale(img)
     h, w = img.shape[:2]
 
-    cv2.imwrite("img.png", img)
+    if save_folder:
+        cv2.imwrite(os.path.join(save_folder, "img.png"), img)
 
     if save_to_folder:
         os.makedirs(save_folder, exist_ok=True)
 
     gradient_writer = GradientWriter()
+    gradient_writer.save_to_folder = save_to_folder
+    gradient_writer.save_folder = save_folder
     gradient_writer.templates = templates
     gradient_writer.assign_gradient_imgs(img)
 
     for i in range(len(gradient_writer.gradient_imgs)):
-        cv2.imwrite(f"img_{i}.png", gradient_writer.gradient_imgs[i])
-    #
-    # return
+        if save_to_folder:
+            cv2.imwrite(os.path.join(save_folder, f"gradient_{i}.png"), gradient_writer.gradient_imgs[i])
+
     gradient_writer.match(w, h)
 
 if __name__ == '__main__':

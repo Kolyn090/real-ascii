@@ -216,3 +216,5 @@ binary
 chars
 **/test
 ascii_art.png
+**/test_writer
+**/test_divide
