@@ -16,4 +16,6 @@ Edge Detection + ASCII character matching
 
 ---
 
-⭐ Image Credit: girl_with_pearl_earring (Wikipedia)
+⭐ Image Credit: 
+* girl with pearl earring by Johannes Vermeer (Wikipedia)
+* tsunami by hokusai (Wikipedia)
