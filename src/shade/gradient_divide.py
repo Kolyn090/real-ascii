@@ -4,10 +4,11 @@ import sys
 import numpy as np
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../util')))
-from static import resize_bilinear, invert_image, increase_contrast, to_grayscale, smooth_colors  # type: ignore
+from static import (resize_bilinear, invert_image, increase_contrast,  # type: ignore
+                    to_grayscale, smooth_colors)  # type: ignore
 
 
-def divide(img_gray: np.ndarray, n_levels: int) -> list[np.ndarray]:
+def divide(img_gray: np.ndarray, n_levels: int, thresholds_gamma: float) -> list[np.ndarray]:
     # h, w = img_gray.shape
     #
     # # 1. Compute gradient magnitude
@@ -34,7 +35,7 @@ def divide(img_gray: np.ndarray, n_levels: int) -> list[np.ndarray]:
     #
     # # Scale to 0..255
     # thresholds = nonlinear * 255
-    thresholds = compute_equal_pixel_thresholds(img_gray, n_levels, 0.2)
+    thresholds = compute_equal_pixel_thresholds(img_gray, n_levels, thresholds_gamma)
     print(thresholds)
 
     level_images = []
@@ -120,7 +121,7 @@ def test():
     if save_to_folder:
         os.makedirs(save_folder, exist_ok=True)
 
-    gradient_imgs = divide(img, 4)
+    gradient_imgs = divide(img, 4, 0.3)
     level = 0
     for gradient_img in gradient_imgs:
         save_path = os.path.join(save_folder, f'gradient_{level}.png')

@@ -8,7 +8,8 @@ from concurrent.futures import ThreadPoolExecutor
 from gradient_divide import divide
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../util')))
-from static import resize_nearest_neighbor, resize_bilinear, invert_image, floor_fill, increase_contrast, to_grayscale, smooth_colors  # type: ignore
+from static import (resize_nearest_neighbor, resize_bilinear, invert_image,  # type: ignore
+                    floor_fill, increase_contrast, to_grayscale, smooth_colors)  # type: ignore
 from writer import Writer, CharTemplate, PositionalCharTemplate  # type: ignore
 from slicer import Cell, Slicer  # type: ignore
 
@@ -21,8 +22,8 @@ class GradientWriter:
         self.matched: list[np.ndarray] = []
         self.template_rank: dict[str, int] = dict()
 
-    def assign_gradient_imgs(self, img_gray: np.ndarray):
-        self.gradient_imgs = divide(img_gray, len(self.templates))
+    def assign_gradient_imgs(self, img_gray: np.ndarray, thresholds_gamma: float):
+        self.gradient_imgs = divide(img_gray, len(self.templates), thresholds_gamma)
 
     def match(self, w: int, h: int):
         p_ct_lists: list[list[PositionalCharTemplate]] = []
@@ -30,7 +31,6 @@ class GradientWriter:
             writer = Writer()
             writer.assign_char_templates(self.templates[i])
             img = self.gradient_imgs[i]
-            # img[img == 0] = 255
             img = invert_image(img)
             self._save_img(f"divided_{i}.png", img)
             slicer = Slicer()
@@ -44,37 +44,9 @@ class GradientWriter:
         with ThreadPoolExecutor(max_workers=16) as executor:
             list(executor.map(lambda cell: self.paste_to_img(cell, result_img), stacks))
 
-        # result_img = invert_image(result_img)
-        # seed_point = (w - 1, h - 1)
-        # result_img = floor_fill(result_img, seed_point, 255)
         result_img = invert_image(result_img)
         result_img = result_img[0:math.floor(h / 22) * 22, 0:math.floor(w / 13) * 13]
         self._save_img("test.png", result_img)
-
-        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
-        # with ThreadPoolExecutor(max_workers=16) as executor:
-        #     list(executor.map(lambda cell: self.paste_to_img(cell, result_img), p_ct_lists[0]))
-        # self._save_img("test_0.png", result_img)
-        #
-        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
-        # with ThreadPoolExecutor(max_workers=16) as executor:
-        #     list(executor.map(lambda cell: self.paste_to_img(cell, result_img), p_ct_lists[1]))
-        # self._save_img("test_1.png", result_img)
-        #
-        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
-        # with ThreadPoolExecutor(max_workers=16) as executor:
-        #     list(executor.map(lambda cell: self.paste_to_img(cell, result_img), p_ct_lists[2]))
-        # self._save_img("test_2.png", result_img)
-        #
-        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
-        # with ThreadPoolExecutor(max_workers=16) as executor:
-        #     list(executor.map(lambda cell: self.paste_to_img(cell, result_img), p_ct_lists[3]))
-        # self._save_img("test_3.png", result_img)
-        #
-        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
-        # with ThreadPoolExecutor(max_workers=16) as executor:
-        #     list(executor.map(lambda cell: self.paste_to_img(cell, result_img), p_ct_lists[4]))
-        # self._save_img("test_4.png", result_img)
 
     @staticmethod
     def paste_to_img(p_ct: PositionalCharTemplate, result_img: np.ndarray):
@@ -136,8 +108,9 @@ class GradientWriter:
             cv2.imwrite(os.path.join(self.save_folder, img_name), img)
 
 def test():
-    factor = 10
-    img_path = '../f_input/ultraman-nexus.png'
+    factor = 4
+    thresholds_gamma = 0.3
+    img_path = '../f_input/prof.jpg'
     save_folder = 'test_writer'
     save_to_folder = True
     templates = [
@@ -149,7 +122,7 @@ def test():
         ["W", "M", "@", "$", "#"]
     ]
     img = cv2.imread(img_path)
-    # img = increase_contrast(img, 2)
+    img = increase_contrast(img, 2)
     if save_folder:
         cv2.imwrite(os.path.join(save_folder, "original_img.png"), img)
 
@@ -168,7 +141,7 @@ def test():
     gradient_writer.save_to_folder = save_to_folder
     gradient_writer.save_folder = save_folder
     gradient_writer.templates = templates
-    gradient_writer.assign_gradient_imgs(img)
+    gradient_writer.assign_gradient_imgs(img, thresholds_gamma)
 
     for i in range(len(gradient_writer.gradient_imgs)):
         if save_to_folder:
