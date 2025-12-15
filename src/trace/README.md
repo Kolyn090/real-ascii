@@ -1,4 +1,4 @@
-# Trace Filter
+# Trace ASCII Filter
 
 The trace image filter includes two steps. The first step generates
 the contour images. You will choose one contour image that you want
