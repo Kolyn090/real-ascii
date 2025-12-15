@@ -52,6 +52,11 @@ An example of contour image:
 python trace.py --image_path ./contour/contour_180_260.png --factor 8 --chars file
 ```
 
+**Japanese Hiragana:**
+```commandline
+python trace.py --image_path ./contour/contour_240_200.png --factor 8 --chars file --invert_color True --char_bound_height 24 --char_bound_width 22 --font C:/Windows/Fonts/msgothic.ttc --chars_file_path ../trace/chars_file_jp.txt
+```
+
 **Parameters**
 
 | argument            | help                                                                                       |
@@ -62,6 +67,7 @@ python trace.py --image_path ./contour/contour_180_260.png --factor 8 --chars fi
 | --factor            | The resize factor of the new image.                                                        |
 | --font              | The font to be used to render the image.                                                   |
 | --chars             | The characters you want to use for rendering the image. Check below for available options. |
+| --chars_file_path   | The text file of your characters.                                                          |
 | --font_size         | The font size.                                                                             |
 | --char_bound_width  | The width of one character. We assume each character has the same size.                    |
 | --char_bound_height | The height of one character. We assume each character has the same size.                   |

@@ -22,10 +22,11 @@ def main():
     parser.add_argument('--char_bound_height', type=int, default=22)
     parser.add_argument('--resize_method', type=str, default='nearest_neighbor')
     parser.add_argument('--invert_color', type=bool, default=False)
+    parser.add_argument('--chars_file_path', type=str, default='../trace/chars_file.txt')
     args = parser.parse_args()
 
     factor = args.factor
-    chars = TraceArgUtil.get_chars(args.chars)
+    chars = TraceArgUtil.get_chars(args.chars, args.chars_file_path)
     font_size = args.font_size
     img_path = args.image_path
     save_path = args.save_path
@@ -38,6 +39,7 @@ def main():
     writer = Writer()
     writer.font = args.font
     writer.font_size = font_size
+    writer.char_bound = (args.char_bound_width, args.char_bound_height)
     writer.assign_char_templates(chars)
     converted = writer.match_cells(cells, w, h)[0]
     converted = converted[0:math.floor(h / args.char_bound_height) * args.char_bound_height,
