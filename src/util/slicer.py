@@ -9,6 +9,9 @@ class Cell:
         self.img: np.ndarray | None = None
 
 class Slicer:
+    def __init__(self):
+        self.max_workers = 16
+
     def slice(self, img: np.ndarray, cell_size: tuple[int, int]) -> list[Cell]:
         h, w = img.shape[:2]
         cell_w, cell_h = cell_size
@@ -26,7 +29,7 @@ class Slicer:
 
         # Run multithreaded slicing
         result = []
-        with ThreadPoolExecutor(max_workers=16) as executor:
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             for top_left, crop in executor.map(self.slice_one, tasks):
                 cell = Cell()
                 cell.top_left = top_left

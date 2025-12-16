@@ -41,6 +41,7 @@ def main():
     h, w = img.shape[:2]
 
     slicer = Slicer()
+    slicer.max_workers = args.max_workers
     cells = slicer.slice(img, (args.char_bound_width, args.char_bound_height))
     writer = Writer()
     writer.approx_ratio = args.vector_ratio
