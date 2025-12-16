@@ -40,7 +40,7 @@ def main():
     parser.add_argument('--erode_iter', type=int, default=1)
     parser.add_argument('--contrast_factor', type=float, default=1)
     parser.add_argument('--contrast_window_size', type=int, default=8)
-    parser.add_argument('--invert_color', type=bool, default=False)
+    parser.add_argument('--invert_color', action='store_true')
     args = parser.parse_args()
     shutil.rmtree(args.save_folder)
     os.makedirs(args.save_folder, exist_ok=True)

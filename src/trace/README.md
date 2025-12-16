@@ -33,7 +33,7 @@ python contour.py --image_path ../girl_with_pearl_earring.jpg --canny1_min 0 --c
 | --kernel_size          | The kernel size of contour function.                                       |
 | --dilate_iter          | The number of iterations of dilate.                                        |
 | --erode_iter           | The number of iterations of erode.                                         |
-| --invert_color         | Set to True to keep the edges black. Otherwise make the edges white.       |
+| --invert_color         | If included, paint the edges white and the background black.               |
 
 An example of contour image:
 
@@ -71,7 +71,7 @@ python trace.py --image_path ./contour/contour_240_200.png --factor 8 --chars fi
 | --font_size         | The font size.                                                                                                    |
 | --char_bound_width  | The width of one character. We assume each character has the same size.                                           |
 | --char_bound_height | The height of one character. We assume each character has the same size.                                          |
-| --invert_color      | Set to True to invert the color of the result image.                                                              |
+| --invert_color      | If included, invert the color of the result image.                                                                |
 | --max_workers       | The maximum number of multithread workers.                                                                        |
 | --matching_method   | The algorithm for template (character) matching. Check below for available options.                               |
 | --vector_ratio      | Only used if the matching method is 'vector'. Each smaller image will be resized by this value before comparison. |
