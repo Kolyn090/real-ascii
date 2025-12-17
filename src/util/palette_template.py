@@ -25,7 +25,8 @@ class PaletteTemplate:
             char_bound=self.char_bound,
             approx_ratio=self.approx_ratio,
             match_method=self.match_method,
-            vector_top_k=self.vector_top_k
+            vector_top_k=self.vector_top_k,
+            chars=self.chars
         )
 
     def __str__(self):

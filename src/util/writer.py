@@ -29,7 +29,8 @@ class Writer:
                  char_bound: tuple[int, int],
                  approx_ratio: float,
                  match_method: str,
-                 vector_top_k: int):
+                 vector_top_k: int,
+                 chars: list[str]):
         self.imageFont = imageFont
         self.max_workers = max_workers
         self.char_bound = char_bound
@@ -40,6 +41,8 @@ class Writer:
         self.char_templates: list[CharTemplate] = []
         self.space_template = CharTemplate()
         self.approx_size = (7, 12)
+
+        self._assign_char_templates(chars)
 
     def get_matching_method(self, method: str) -> Callable[[np.ndarray], CharTemplate]:
         match method:
@@ -221,14 +224,13 @@ class Writer:
             return cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         return img
 
-    def assign_char_templates(self, chars: list[str]) -> list[CharTemplate]:
+    def _assign_char_templates(self, chars: list[str]):
         result = []
         for char in chars:
             char_template = self._create_char_template(char, self.imageFont)
             result.append(char_template)
         self.char_templates = result
         self.space_template = self._create_char_template(" ", self.imageFont)
-        return result
 
     def _create_char_template(self, char: str, imageFont: ImageFont) -> CharTemplate:
         self.approx_size = (math.floor(self.char_bound[0] * self.approx_ratio),

@@ -1,5 +1,3 @@
-import os
-import cv2
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
@@ -9,8 +7,8 @@ class Cell:
         self.img: np.ndarray | None = None
 
 class Slicer:
-    def __init__(self):
-        self.max_workers = 16
+    def __init__(self, max_workers=16):
+        self.max_workers = max_workers
 
     def slice(self, img: np.ndarray, cell_size: tuple[int, int]) -> list[Cell]:
         h, w = img.shape[:2]
@@ -58,24 +56,3 @@ class Slicer:
                 0 <= x2 < w and
                 0 <= y2 < h
         )
-
-def main():
-    img_path = '../binary/bin_85.png'
-    img = cv2.imread(img_path)
-    save_to_folder = False
-    save_folder = 'test'
-    if save_to_folder:
-        os.makedirs(save_folder, exist_ok=True)
-
-    slicer = Slicer()
-    cells = slicer.slice(img, (13, 22))
-    for cell in cells:
-        top_left = cell.top_left
-        crop = cell.img
-        print(top_left)
-        save_path = os.path.join(save_folder, f"slice_{top_left[0]}_{top_left[1]}.png")
-        if save_to_folder:
-            cv2.imwrite(save_path, crop)
-
-if __name__ == '__main__':
-    main()

@@ -32,7 +32,7 @@ class GradientWriter:
         for i in range(len(self.templates)):
             writer = Writer()
             writer.assign_get_most_similar(self.templates[i].match_method)
-            writer.assign_char_templates(self.templates[i].chars)
+            writer._assign_char_templates(self.templates[i].chars)
 
             img = self.gradient_imgs[i]
             img = invert_image(img)

@@ -7,17 +7,18 @@ from arg_util import ShadeArgUtil, TraceArgUtil
 def test_char_templates():
     templates = ShadeArgUtil.get_palette_json('../../resource/gradient_char_files/palette_single.json')
     template = templates[0]
+    chars = TraceArgUtil.get_chars('ascii')
+    template.chars = chars
 
     max_workers = 16
     save_to_folder = True
     save_folder = 'chars'
-    chars = TraceArgUtil.get_chars('ascii')
+
     if save_to_folder:
         os.makedirs(save_folder, exist_ok=True)
 
     writer = template.create_writer(max_workers)
-    char_templates = writer.assign_char_templates(chars)
-    for char_template in char_templates:
+    for char_template in writer.char_templates:
         char = char_template.char
         template = char_template.template
         print(char)
@@ -30,6 +31,8 @@ def test_char_templates():
 def test_match_cells():
     templates = ShadeArgUtil.get_palette_json('../../resource/gradient_char_files/palette_single.json')
     template = templates[0]
+    chars = TraceArgUtil.get_chars('ascii')
+    template.chars = chars
 
     max_workers = 16
     factor = 8
@@ -41,7 +44,6 @@ def test_match_cells():
     img = cv2.imread(img_path)
     img = TraceArgUtil.resize(resize_method, img, factor)
     h, w = img.shape[:2]
-    chars = TraceArgUtil.get_chars('ascii')
 
     if save_to_folder:
         os.makedirs(save_folder, exist_ok=True)
@@ -49,7 +51,6 @@ def test_match_cells():
     slicer = Slicer()
     cells = slicer.slice(img, char_bound)
     writer = template.create_writer(max_workers)
-    writer.assign_char_templates(chars)
 
     test_methods = ['slow', 'optimized', 'fast', 'vector']
     for method in test_methods:
