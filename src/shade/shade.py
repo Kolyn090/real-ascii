@@ -12,6 +12,10 @@ from static import (resize_nearest_neighbor, resize_bilinear, invert_image,   # 
                     floor_fill, increase_contrast, to_grayscale, smooth_colors)  # type: ignore
 from arg_util import ShadeArgUtil  # type: ignore
 
+"""
+python shade.py --image_path ../../resource/imgs/tsunami.jpg --resize_factor 2
+"""
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--image_path', type=str)
@@ -22,17 +26,12 @@ def main():
     parser.add_argument('--sigma_s', type=int, default=5)
     parser.add_argument('--sigma_r', type=float, default=0.5)
     parser.add_argument('--thresholds_gamma', type=float, default=0.5)
-    parser.add_argument('--palette_path', type=str, default='../../resource/gradient_char_files/palette.txt')
+    parser.add_argument('--palette_path', type=str, default='../../resource/gradient_char_files/palette_default.json')
     parser.add_argument('--max_workers', type=int, default=16)
-    parser.add_argument('--char_bound_width', type=int, default=13)
-    parser.add_argument('--char_bound_height', type=int, default=22)
-
 
     args = parser.parse_args()
-    save_folder = args.save_path
 
-    save_to_folder = True
-    templates = ShadeArgUtil.get_palette(args.palette_path)
+    templates = ShadeArgUtil.get_palette_json(args.palette_path)
     img = cv2.imread(args.image_path)
     img = increase_contrast(img, args.contrast_factor)
     img = resize_bilinear(img, args.resize_factor)
@@ -40,10 +39,7 @@ def main():
     img = to_grayscale(img)
     h, w = img.shape[:2]
 
-    gradient_writer = GradientWriter()
-    gradient_writer.save_to_folder = save_to_folder
-    gradient_writer.save_folder = save_folder
-    gradient_writer.templates = templates
+    gradient_writer = GradientWriter(templates, args.max_workers)
     gradient_writer.assign_gradient_imgs(img, args.thresholds_gamma)
     converted = gradient_writer.match(w, h)
     cv2.imwrite(args.save_path, converted)

@@ -30,10 +30,8 @@ class GradientWriter:
     def match(self, w: int, h: int) -> np.ndarray:
         p_ct_lists: list[list[PositionalCharTemplate]] = []
         for i in range(len(self.templates)):
-            writer = Writer()
-            writer.assign_get_most_similar(self.templates[i].match_method)
-            writer._assign_char_templates(self.templates[i].chars)
-
+            template = self.templates[i]
+            writer = template.create_writer(self.max_workers)
             img = self.gradient_imgs[i]
             img = invert_image(img)
             slicer = Slicer()
@@ -81,9 +79,7 @@ class GradientWriter:
 
         result = []
         for top_left, char_template in table.items():
-            p_ct = PositionalCharTemplate()
-            p_ct.top_left = top_left
-            p_ct.char_template = char_template
+            p_ct = PositionalCharTemplate(char_template, top_left)
             result.append(p_ct)
         return result
 

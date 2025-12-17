@@ -60,8 +60,10 @@ def smooth_colors(img, sigma_s=75, sigma_r=0.4):
     )
 
 def to_binary_strong(img: np.ndarray) -> np.ndarray:
-    binary = img.copy()
-    binary[binary != 255] = 0
+    if img.ndim == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    binary = np.zeros_like(img, dtype=np.uint8)
+    binary[img == 255] = 255
     return binary
 
 def test():

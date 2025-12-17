@@ -39,16 +39,6 @@ class TraceArgUtil:
 
 class ShadeArgUtil:
     @staticmethod
-    def get_palette(file_path: str) -> list[list[str]]:
-        with open(file_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-            result = [list(dict.fromkeys(c for c in line if c != '\n')) for line in lines]
-            for lst in result:
-                if len(lst) == 0:
-                    lst.append(' ')
-            return result
-
-    @staticmethod
     def get_palette_json(file_path: str) -> list[PaletteTemplate]:
         def parse_template(obj: dict) -> PaletteTemplate:
             return PaletteTemplate(

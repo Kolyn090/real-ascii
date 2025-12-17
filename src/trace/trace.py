@@ -27,7 +27,7 @@ def main():
     parser.add_argument('--chars_file_path', type=str, default='../../resource/char_files/chars_file.txt')
 
     parser.add_argument('--max_workers', type=int, default=16)
-    parser.add_argument('--matching_method', type=str, default='fast')
+    parser.add_argument('--match_method', type=str, default='fast')
     parser.add_argument('--vector_ratio', type=float, default=0.5)
     parser.add_argument('--vector_top_k', type=int, default=5)
 
@@ -41,7 +41,7 @@ def main():
         char_bound=(args.char_bound_width, args.char_bound_height),
         approx_ratio=args.vector_ratio,
         vector_top_k=args.vector_top_k,
-        match_method=args.matching_method
+        match_method=args.match_method
     )
 
     img = cv2.imread(args.image_path)

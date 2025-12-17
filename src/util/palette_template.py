@@ -18,7 +18,7 @@ class PaletteTemplate:
         self.vector_top_k = vector_top_k
         self.match_method = match_method
 
-    def create_writer(self, max_workers) -> Writer:
+    def create_writer(self, max_workers: int) -> Writer:
         return Writer(
             imageFont=self.imageFont,
             max_workers=max_workers,

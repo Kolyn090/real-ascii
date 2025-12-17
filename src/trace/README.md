@@ -73,7 +73,7 @@ python trace.py --image_path ./contour/contour_240_200.png --factor 8 --chars fi
 | --char_bound_height | The height of one character. We assume each character has the same size.                                          |
 | --invert_color      | If included, invert the color of the result image.                                                                |
 | --max_workers       | The maximum number of multithread workers.                                                                        |
-| --matching_method   | The algorithm for template (character) matching. Check below for available options.                               |
+| --match_method      | The algorithm for template (character) matching. Check below for available options.                               |
 | --vector_ratio      | Only used if the matching method is 'vector'. Each smaller image will be resized by this value before comparison. |
 | --vector_top_k      | Only used if the matching method is 'vector'. Only compare the smaller image to the k best candidates.            |
 
@@ -91,7 +91,7 @@ python trace.py --image_path ./contour/contour_240_200.png --factor 8 --chars fi
 | ascii | Use all 128 standard ASCII characters as rendering characters.                         |
 | file  | Read characters from file `trace/chars_file.txt`. New line character will be excluded. |
 
-**matching_method**
+**match_method**
 
 | code      | help                                                                                                                                |
 |-----------|-------------------------------------------------------------------------------------------------------------------------------------|
