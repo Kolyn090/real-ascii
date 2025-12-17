@@ -2,9 +2,9 @@ import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
 class Cell:
-    def __init__(self):
-        self.top_left: tuple[int, int] | None = None
-        self.img: np.ndarray | None = None
+    def __init__(self, top_left: tuple[int, int], img: np.ndarray):
+        self.top_left = top_left
+        self.img = img
 
 class Slicer:
     def __init__(self, max_workers=16):
@@ -29,9 +29,7 @@ class Slicer:
         result = []
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             for top_left, crop in executor.map(self.slice_one, tasks):
-                cell = Cell()
-                cell.top_left = top_left
-                cell.img = crop
+                cell = Cell(top_left, crop)
                 result.append(cell)
 
         return result

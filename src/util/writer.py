@@ -10,17 +10,24 @@ from slicer import Cell
 from static import to_binary_strong
 
 class CharTemplate:
-    def __init__(self):
-        self.char: str | None = None
-        self.template: np.ndarray | None = None
-        self.template_binary: np.ndarray | None = None
-        self.template_small: np.ndarray | None = None
-        self.projection: np.ndarray | None = None
+    def __init__(self,
+                 char: str,
+                 template: np.ndarray,
+                 template_binary: np.ndarray,
+                 template_small: np.ndarray,
+                 projection: np.ndarray):
+        self.char = char
+        self.template = template
+        self.template_binary = template_binary
+        self.template_small = template_small
+        self.projection = projection
 
 class PositionalCharTemplate:
-    def __init__(self):
-        self.char_template: CharTemplate | None = None
-        self.top_left: tuple[int, int] | None = None
+    def __init__(self,
+                 char_template: CharTemplate,
+                 top_left: tuple[int, int]):
+        self.char_template = char_template
+        self.top_left = top_left
 
 class Writer:
     def __init__(self,
@@ -39,7 +46,7 @@ class Writer:
         self.vector_top_k = vector_top_k
 
         self.char_templates: list[CharTemplate] = []
-        self.space_template = CharTemplate()
+        self.space_template = None
         self.approx_size = (7, 12)
 
         self._assign_char_templates(chars)
@@ -78,11 +85,7 @@ class Writer:
         bottom_right_y = top_left[1] + template.shape[0]
         bottom_right_x = top_left[0] + template.shape[1]
         result_img[top_left[1]:bottom_right_y, top_left[0]:bottom_right_x] = template
-
-        result = PositionalCharTemplate()
-        result.char_template = most_similar
-        result.top_left = top_left
-        return result
+        return PositionalCharTemplate(most_similar, top_left)
 
     def _get_most_similar_slow(self, img: np.ndarray) -> CharTemplate:
         """
@@ -238,12 +241,16 @@ class Writer:
         img = Image.new("RGB", self.char_bound, "white")
         draw = ImageDraw.Draw(img)
         draw.text((0, 0), char, font=imageFont, fill="black")
-        char_template = CharTemplate()
-        char_template.char = char
-        char_template.template = np.array(img)
-        char_template.template_binary = to_binary_strong(char_template.template)
-        template_small = cv2.resize(char_template.template_binary, self.approx_size, interpolation=cv2.INTER_NEAREST)
+
+        template = np.array(img)
+        template_binary = to_binary_strong(template)
+        template_small = cv2.resize(template_binary, self.approx_size, interpolation=cv2.INTER_NEAREST)
         template_small = to_binary_strong(template_small)
-        char_template.template_small = template_small
-        char_template.projection = template_small.ravel()
+        char_template = CharTemplate(
+            char=char,
+            template=template,
+            template_binary=template_binary,
+            template_small=template_small,
+            projection=template_small.ravel()
+        )
         return char_template
