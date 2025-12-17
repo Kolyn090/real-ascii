@@ -12,41 +12,54 @@ from static import (resize_nearest_neighbor, resize_bilinear, invert_image,  # t
                     floor_fill, increase_contrast, to_grayscale, smooth_colors)  # type: ignore
 from writer import Writer, CharTemplate, PositionalCharTemplate  # type: ignore
 from slicer import Cell, Slicer  # type: ignore
+from palette_template import PaletteTemplate  # type: ignore
+from arg_util import ShadeArgUtil  # type: ignore
 
 class GradientWriter:
-    def __init__(self):
-        self.save_to_folder = False
-        self.save_folder = ""
+    def __init__(self,
+                 templates: list[PaletteTemplate],
+                 max_workers):
+        self.templates = templates
+        self.max_workers = max_workers
         self.gradient_imgs: list[np.ndarray] = []
-        self.templates: list[list[str]] = []
-        self.matched: list[np.ndarray] = []
         self.template_rank: dict[str, int] = dict()
 
     def assign_gradient_imgs(self, img_gray: np.ndarray, thresholds_gamma: float):
         self.gradient_imgs = divide(img_gray, len(self.templates), thresholds_gamma)
 
-    def match(self, w: int, h: int):
+    def match(self, w: int, h: int) -> np.ndarray:
         p_ct_lists: list[list[PositionalCharTemplate]] = []
         for i in range(len(self.templates)):
             writer = Writer()
-            writer.assign_char_templates(self.templates[i])
+            writer.assign_get_most_similar(self.templates[i].match_method)
+            writer.assign_char_templates(self.templates[i].chars)
+
             img = self.gradient_imgs[i]
             img = invert_image(img)
-            self._save_img(f"divided_{i}.png", img)
             slicer = Slicer()
-            cells = slicer.slice(img, (13, 22))
+            cells = slicer.slice(img, self.templates[i].char_bound)
             h, w = img.shape[:2]
             _, p_cts = writer.match_cells(cells, w, h)
             p_ct_lists.append(p_cts)
         stacks = self.stack(p_ct_lists)
         result_img = np.zeros((h, w, 3), dtype=np.uint8)
 
-        with ThreadPoolExecutor(max_workers=16) as executor:
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
             list(executor.map(lambda cell: self.paste_to_img(cell, result_img), stacks))
 
         result_img = invert_image(result_img)
-        result_img = result_img[0:math.floor(h / 22) * 22, 0:math.floor(w / 13) * 13]
-        self._save_img("test.png", result_img)
+        large_char_bound = self.get_large_char_bound()
+        result_img = result_img[0:math.floor(h / large_char_bound[1]) * large_char_bound[1],
+                                0:math.floor(w / large_char_bound[0]) * large_char_bound[0]]
+        return result_img
+
+    def get_large_char_bound(self) -> tuple[int, int]:
+        result_width = 0
+        result_height = 0
+        for template in self.templates:
+            result_width = max(template.char_bound[0], result_width)
+            result_height = max(template.char_bound[1], result_height)
+        return result_width, result_height
 
     @staticmethod
     def paste_to_img(p_ct: PositionalCharTemplate, result_img: np.ndarray):
@@ -96,16 +109,12 @@ class GradientWriter:
 
     def assign_template_rank(self):
         count = 0
-        for level in self.templates:
-            for template in level:
-                self.template_rank[template] = count
+        for template in self.templates:
+            for char in template.chars:
+                self.template_rank[char] = count
                 count += 1
         # Force space to have the lowest rank
         self.template_rank[" "] = -1
-
-    def _save_img(self, img_name: str, img: np.ndarray):
-        if self.save_to_folder:
-            cv2.imwrite(os.path.join(self.save_folder, img_name), img)
 
 def test():
     factor = 4
@@ -113,34 +122,25 @@ def test():
     img_path = '../f_input/prof.jpg'
     save_folder = 'test_writer'
     save_to_folder = True
-    templates = [
-        [" "],
-        [" ", ".", ",", "-", "_", "^", "'"],
-        [" ", ":", ";", "!", "i"],
-        ["+", "=", "*", "l", "[", "]", "~"],
-        ["%", "&", "8", "B"],
-        ["W", "M", "@", "$", "#"]
-    ]
     img = cv2.imread(img_path)
     img = increase_contrast(img, 2)
-    if save_folder:
-        cv2.imwrite(os.path.join(save_folder, "original_img.png"), img)
+
+    if save_to_folder:
+        os.makedirs(save_folder, exist_ok=True)
+
+    # if save_to_folder:
+    #     cv2.imwrite(os.path.join(save_folder, "original_img.png"), img)
 
     img = resize_bilinear(img, factor)
     img = smooth_colors(img, sigma_s=1, sigma_r=0.6)
     img = to_grayscale(img)
     h, w = img.shape[:2]
 
-    if save_folder:
-        cv2.imwrite(os.path.join(save_folder, "img.png"), img)
+    # if save_to_folder:
+    #     cv2.imwrite(os.path.join(save_folder, "img.png"), img)
 
-    if save_to_folder:
-        os.makedirs(save_folder, exist_ok=True)
-
-    gradient_writer = GradientWriter()
-    gradient_writer.save_to_folder = save_to_folder
-    gradient_writer.save_folder = save_folder
-    gradient_writer.templates = templates
+    templates = ShadeArgUtil.get_palette_json('../../resource/gradient_char_files/palette_default.json')
+    gradient_writer = GradientWriter(templates, max_workers=16)
     gradient_writer.assign_gradient_imgs(img, thresholds_gamma)
 
     for i in range(len(gradient_writer.gradient_imgs)):

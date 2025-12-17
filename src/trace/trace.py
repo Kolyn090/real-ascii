@@ -22,7 +22,7 @@ def main():
     parser.add_argument('--char_bound_height', type=int, default=22)
     parser.add_argument('--resize_method', type=str, default='nearest_neighbor')
     parser.add_argument('--invert_color', action='store_true')
-    parser.add_argument('--chars_file_path', type=str, default='../trace/chars_file.txt')
+    parser.add_argument('--chars_file_path', type=str, default='../../resource/char_files/chars_file.txt')
 
     parser.add_argument('--max_workers', type=int, default=16)
     parser.add_argument('--matching_method', type=str, default='fast')

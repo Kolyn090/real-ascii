@@ -58,7 +58,7 @@ class ShadeArgUtil:
                 (obj["char_bound_width"], obj["char_bound_height"]),
                 obj["approx_ratio"],
                 obj["vector_top_k"],
-                obj["get_most_similar_method"]
+                obj["match_method"]
             )
 
         result = []
