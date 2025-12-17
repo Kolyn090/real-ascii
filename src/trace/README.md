@@ -14,7 +14,7 @@ Art. The following guides describes the process.
 python contour.py --image_path ../../resource/imgs/girl_with_pearl_earring.jpg --canny1_min 0 --canny1_max 270 --canny1_step 20 --canny2_min 0 --canny2_max 270 --canny2_step 20 --dilate_iter 1 --erode_iter 0 --gb_sigmaX 0 --gb_size 5 --contrast_factor 16 --contrast_window_size 8
 ```
 
-**Another Example:**
+**Another Example**:
 ```commandline
 python contour.py --image_path ../../resource/imgs/tsunami.jpg --canny1_min 0 --canny1_max 270 --canny1_step 20 --canny2_min 0 --canny2_max 270 --canny2_step 20 --dilate_iter 1 --erode_iter 0 --gb_sigmaX 0 --gb_size 5 --contrast_factor 4 --contrast_window_size 8
 ```
@@ -57,36 +57,36 @@ An example of contour image:
 python trace.py --image_path ./contour/contour_180_260.png --resize_factor 8 --chars file --font C:/Windows/Fonts/consolab.ttf --char_bound_width 13 --char_bound_height 22 --match_method slow 
 ```
 
-**Japanese Hiragana:**
+**Japanese Hiragana**:
 ```commandline
 python trace.py --image_path ./contour/contour_240_200.png --resize_factor 8 --chars file --char_bound_height 24 --char_bound_width 22 --font C:/Windows/Fonts/msgothic.ttc --font_size 24 --chars_file_path ../../resource/char_files/chars_file_hiragana.txt --match_method vector --approx_ratio 0.5 --vector_top_k 5 --invert_color
 ```
 
-**An Example using Palette file:**
+**An Example using Palette file**:
 ```commandline
 python trace.py --image_path ./contour/contour_180_260.png --resize_factor 8 --palette_path ../../resource/palette_files/palette_chars.json --match_method slow
 ```
 
 **Parameters**
 
-| argument            | help                                                                                                                            |
-|---------------------|---------------------------------------------------------------------------------------------------------------------------------|
-| --image_path        | The path of the image.                                                                                                          |
-| --save_path         | The directory where the result image will be saved to.                                                                          |
-| --resize_method     | The image resize method. Check below for available options.                                                                     |
-| --resize_factor     | The resize factor of the new image.                                                                                             |
-| --font              | The font to be used to render the image.                                                                                        |
-| --chars             | The characters you want to use for rendering the image. Check below for available options.                                      |
-| --chars_file_path   | The text file of your characters.                                                                                               |
-| --font_size         | The font size.                                                                                                                  |
-| --char_bound_width  | The width of one character. We assume each character has the same size.                                                         |
-| --char_bound_height | The height of one character. We assume each character has the same size.                                                        |
-| --invert_color      | If included, invert the color of the result image.                                                                              |
-| --max_workers       | The maximum number of multithread workers.                                                                                      |
-| --match_method      | The algorithm for template (character) matching. Check below for available options.                                             |
-| --approx_ratio      | Only used if the matching method is 'vector'. Each smaller image will be resized by this value before comparison.               |
-| --vector_top_k      | Only used if the matching method is 'vector'. Only compare the smaller image to the k best candidates.                          |
-| --palette_path      | Use a palette. Only the first template will be used. The values in template can be override overridden with explicit arguments. |
+| argument            | help                                                                                                                   |
+|---------------------|------------------------------------------------------------------------------------------------------------------------|
+| --image_path        | The path of the image.                                                                                                 |
+| --save_path         | The directory where the result image will be saved to.                                                                 |
+| --resize_method     | The image resize method. Check below for available options.                                                            |
+| --resize_factor     | The resize factor of the new image.                                                                                    |
+| --font              | The font to be used to render the image.                                                                               |
+| --chars             | The characters you want to use for rendering the image. Check below for available options.                             |
+| --chars_file_path   | The text file of your characters.                                                                                      |
+| --font_size         | The font size.                                                                                                         |
+| --char_bound_width  | The width of one character. We assume each character has the same size.                                                |
+| --char_bound_height | The height of one character. We assume each character has the same size.                                               |
+| --invert_color      | If included, invert the color of the result image.                                                                     |
+| --max_workers       | The maximum number of multithread workers.                                                                             |
+| --match_method      | The algorithm for template (character) matching. Check below for available options.                                    |
+| --approx_ratio      | Only used if the matching method is 'vector'. Each smaller image will be resized by this value before comparison.      |
+| --vector_top_k      | Only used if the matching method is 'vector'. Only compare the smaller image to the k best candidates.                 |
+| --palette_path      | Use a palette. Only the first template will be used. The values in template can be overridden with explicit arguments. |
 
 **resize_method**
 

@@ -1,5 +1,7 @@
 import os.path
 import sys
+import time
+
 import cv2
 import argparse
 
@@ -12,11 +14,9 @@ from static import (resize_nearest_neighbor, resize_bilinear, invert_image,   # 
                     floor_fill, increase_contrast, to_grayscale, smooth_colors)  # type: ignore
 from arg_util import ShadeArgUtil  # type: ignore
 
-"""
-python shade.py --image_path ../../resource/imgs/tsunami.jpg --resize_factor 2
-"""
-
 def main():
+    start = time.perf_counter()
+
     parser = argparse.ArgumentParser()
     parser.add_argument('--image_path', type=str)
     parser.add_argument('--save_path', type=str, default='ascii_art.png')
@@ -28,6 +28,7 @@ def main():
     parser.add_argument('--thresholds_gamma', type=float, default=0.5)
     parser.add_argument('--palette_path', type=str, default='../../resource/palette_files/palette_default.json')
     parser.add_argument('--max_workers', type=int, default=16)
+    parser.add_argument('--invert_color', action='store_true')
 
     args = parser.parse_args()
 
@@ -42,7 +43,12 @@ def main():
     gradient_writer = GradientWriter(templates, args.max_workers)
     gradient_writer.assign_gradient_imgs(img, args.thresholds_gamma)
     converted = gradient_writer.match(w, h)
+    if args.invert_color:
+        converted = invert_image(converted)
     cv2.imwrite(args.save_path, converted)
+
+    elapsed = time.perf_counter() - start
+    print(f"Completed: spent {elapsed:.6f} seconds")
 
 if __name__ == '__main__':
     main()

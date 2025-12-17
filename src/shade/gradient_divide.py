@@ -36,7 +36,7 @@ def divide(img_gray: np.ndarray, n_levels: int, thresholds_gamma: float) -> list
     # # Scale to 0..255
     # thresholds = nonlinear * 255
     thresholds = compute_equal_pixel_thresholds(img_gray, n_levels, thresholds_gamma)
-    print(thresholds)
+    print(f"Gradient Thresholds: {thresholds}")
 
     level_images = []
 
