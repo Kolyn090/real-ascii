@@ -59,6 +59,16 @@ to faster rendering but also could miss retrieve better candidates. This value i
 
 `match_method`: is the algorithm of template matching.
 
+**match_method**
+
+| code      | help                                                                                                                                |
+|-----------|-------------------------------------------------------------------------------------------------------------------------------------|
+| slow      | The slowest matching algorithm with the best matching quality. The templates are grayscale.                                         |
+| optimized | Almost twice as fast as slow. The templates are binary. The resulting image will look bold compared to slow method.                 |
+| fast      | Almost twice as fast as optimized. Utilizes XOR comparison. The resulting image is very similar to optimized method.                |
+| vector    | Almost ten times as fast as slow. Vectorize all smaller images and compare the flattened array. The resulting image is much bolder. |
+
+
 🧑‍🏫 **My tips**: more layers will lead the algorithm to be more precise about the shading levels.
 In theory, this will output better quality rendering if you do this correctly.
 Usually for the layers in the higher rank you should use less dense characters. For example:
