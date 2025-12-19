@@ -35,6 +35,7 @@ python edge_gradient.py --image_path ../../resource/imgs/tsunami.jpg --resize_fa
 | --ksize            | The kernel size of contour function.                                                                                      |
 | --gx               | The image gradient in the horizontal edges.                                                                               |
 | --gy               | The image gradient in the vertical edges.                                                                                 |
+| --color_option     | The option to color the image. Check below for available options.                                                         |
 
 **resize_method**
 
@@ -42,6 +43,12 @@ python edge_gradient.py --image_path ../../resource/imgs/tsunami.jpg --resize_fa
 |------------------|-----------------------------------------------|
 | nearest neighbor | Resize image with nearest neighbor algorithm. |
 | bilinear         | Resize image with bilinear algorithm.         |
+
+**color_option**
+
+| code     | help                                                           |
+|----------|----------------------------------------------------------------|
+| original | Color the ASCII art with the (resized) original image's color. |
 
 An example of ascii art image:
 

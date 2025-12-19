@@ -31,6 +31,7 @@ python shade.py --image_path ../../resource/imgs/monalisa.jpg --resize_factor 8
 | --palette_path     | Use a palette.                                                                                                            |
 | --max_workers      | The maximum number of multithread workers.                                                                                |
 | --invert_color     | If included, invert the color of the result image.                                                                        |
+| --color_option     | The option to color the image. Check below for available options.                                                         |
 
 **resize_method**
 
@@ -38,6 +39,12 @@ python shade.py --image_path ../../resource/imgs/monalisa.jpg --resize_factor 8
 |------------------|-----------------------------------------------|
 | nearest neighbor | Resize image with nearest neighbor algorithm. |
 | bilinear         | Resize image with bilinear algorithm.         |
+
+**color_option**
+
+| code     | help                                                           |
+|----------|----------------------------------------------------------------|
+| original | Color the ASCII art with the (resized) original image's color. |
 
 An example of ascii art image (compressed):
 

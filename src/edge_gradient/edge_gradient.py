@@ -37,10 +37,10 @@ def main():
 
     templates = ShadeArgUtil.get_palette_json(args.palette_path)
     img = cv2.imread(args.image_path)
-    img = increase_contrast(img, args.contrast_factor)
     img = TraceArgUtil.resize(args.resize_method, img, args.resize_factor)
-    img = smooth_colors(img, sigma_s=args.sigma_s, sigma_r=args.sigma_r)
     o_img = img.copy()
+    img = increase_contrast(img, args.contrast_factor)
+    img = smooth_colors(img, sigma_s=args.sigma_s, sigma_r=args.sigma_r)
     img = to_grayscale(img)
     h, w = img.shape[:2]
 
