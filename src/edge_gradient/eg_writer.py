@@ -41,7 +41,7 @@ def test():
     ksize = 9
     gx = 3
     gy = 3
-    img_path = '../f_input/ultraman-nexus.png'
+    img_path = '../../resource/f_input/ultraman-nexus.png'
     save_folder = 'test_writer'
     save_to_folder = True
     img = cv2.imread(img_path)

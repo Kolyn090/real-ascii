@@ -59,7 +59,7 @@ def divide(img_gray: np.ndarray,
 
 def test():
     factor = 8
-    img_path = '../f_input/ultraman-nexus.png'
+    img_path = '../../resource/f_input/ultraman-nexus.png'
     save_folder = 'test'
     save_to_folder = True
     img = cv2.imread(img_path)
@@ -68,8 +68,6 @@ def test():
     img = resize_bilinear(img, factor)
     img = smooth_colors(img, sigma_s=10, sigma_r=1.5)
 
-    # print(compute_equal_pixel_thresholds(img, 4))
-    # return
     if save_to_folder:
         os.makedirs(save_folder, exist_ok=True)
 

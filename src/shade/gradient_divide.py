@@ -105,7 +105,7 @@ def compute_equal_pixel_thresholds(img_gray: np.ndarray,
 
 def test():
     factor = 20
-    img_path = '../f_input/ultraman-nexus.jpg'
+    img_path = '../../resource/f_input/ultraman-nexus.png'
     save_folder = 'test'
     save_to_folder = True
     img = cv2.imread(img_path)

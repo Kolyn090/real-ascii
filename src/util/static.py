@@ -92,7 +92,7 @@ def to_binary_strong(img: np.ndarray) -> np.ndarray:
     return binary
 
 def test():
-    img_path = '../f_input/prof.jpg'
+    img_path = '../../resource/f_input/prof.jpg'
     img = cv2.imread(img_path)
     h, w = img.shape[:2]
     seed_point = (w - 1, h - 1)
