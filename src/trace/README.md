@@ -102,24 +102,26 @@ python trace.py ^
 
 **Parameters**
 
-| argument            | help                                                                                                                   |
-|---------------------|------------------------------------------------------------------------------------------------------------------------|
-| --image_path        | The path of the image.                                                                                                 |
-| --save_path         | The directory where the result image will be saved to.                                                                 |
-| --resize_method     | The image resize method. Check below for available options.                                                            |
-| --resize_factor     | The resize factor of the new image.                                                                                    |
-| --font              | The font to be used to render the image.                                                                               |
-| --chars             | The characters you want to use for rendering the image. Check below for available options.                             |
-| --chars_file_path   | The text file of your characters.                                                                                      |
-| --font_size         | The font size.                                                                                                         |
-| --char_bound_width  | The width of one character. We assume each character has the same size.                                                |
-| --char_bound_height | The height of one character. We assume each character has the same size.                                               |
-| --invert_color      | If included, invert the color of the result image.                                                                     |
-| --max_workers       | The maximum number of multithread workers.                                                                             |
-| --match_method      | The algorithm for template (character) matching. Check below for available options.                                    |
-| --approx_ratio      | Only used if the matching method is 'vector'. Each smaller image will be resized by this value before comparison.      |
-| --vector_top_k      | Only used if the matching method is 'vector'. Only compare the smaller image to the k best candidates.                 |
-| --palette_path      | Use a palette. Only the first template will be used. The values in template can be overridden with explicit arguments. |
+| argument              | help                                                                                                                   |
+|-----------------------|------------------------------------------------------------------------------------------------------------------------|
+| --image_path          | The path of the image.                                                                                                 |
+| --save_path           | The directory where the result image will be saved to.                                                                 |
+| --resize_method       | The image resize method. Check below for available options.                                                            |
+| --resize_factor       | The resize factor of the new image.                                                                                    |
+| --font                | The font to be used to render the image.                                                                               |
+| --chars               | The characters you want to use for rendering the image. Check below for available options.                             |
+| --chars_file_path     | The text file of your characters.                                                                                      |
+| --font_size           | The font size.                                                                                                         |
+| --char_bound_width    | The width of one character. We assume each character has the same size.                                                |
+| --char_bound_height   | The height of one character. We assume each character has the same size.                                               |
+| --invert_color        | If included, invert the color of the result image.                                                                     |
+| --max_workers         | The maximum number of multithread workers.                                                                             |
+| --match_method        | The algorithm for template (character) matching. Check below for available options.                                    |
+| --approx_ratio        | Only used if the matching method is 'vector'. Each smaller image will be resized by this value before comparison.      |
+| --vector_top_k        | Only used if the matching method is 'vector'. Only compare the smaller image to the k best candidates.                 |
+| --palette_path        | Use a palette. Only the first template will be used. The values in template can be overridden with explicit arguments. |
+| --color_option        | The option to color the image. Check below for available options.                                                      |
+| --original_image_path | REQUIRED if you are doing `color_option=original`.                                                                     |
 
 **resize_method**
 
@@ -143,6 +145,12 @@ python trace.py ^
 | optimized | Almost twice as fast as slow. The templates are binary. The resulting image will look bold compared to slow method.                 |
 | fast      | Almost twice as fast as optimized. Utilizes XOR comparison. The resulting image is very similar to optimized method.                |
 | vector    | Almost ten times as fast as slow. Vectorize all smaller images and compare the flattened array. The resulting image is much bolder. |
+
+**color_option**
+
+| code     | help                                                           |
+|----------|----------------------------------------------------------------|
+| original | Color the ASCII art with the (resized) original image's color. |
 
 An example of ascii art image:
 
