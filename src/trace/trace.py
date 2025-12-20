@@ -15,6 +15,7 @@ from arg_util import TraceArgUtil, ShadeArgUtil, ColorArgUtil  # type: ignore
 from palette_template import PaletteTemplate  # type: ignore
 from static import invert_image  # type: ignore
 # from color_util import copy_non_black_pixels_to_white  # type: ignore
+from ascii_writer import AsciiWriter  # type: ignore
 
 def main():
     start = time.perf_counter()
@@ -49,6 +50,8 @@ def main():
     # vector_top_k
     # match_method
     parser.add_argument('--palette_path', type=str, default='')
+    parser.add_argument('--save_chars', action='store_true')
+    parser.add_argument('--save_chars_path', type=str, default='./')
 
     args = parser.parse_args()
     template = assemble_template(args)
@@ -62,7 +65,7 @@ def main():
     char_bound_height = template.char_bound[1]
     cells = slicer.slice(img, (char_bound_width, char_bound_height))
     writer = template.create_writer(args.max_workers)
-    converted = writer.match_cells(cells, w, h)[0]
+    converted, p_cts = writer.match_cells(cells, w, h)
     converted = converted[0:math.floor(h / char_bound_height) * char_bound_height,
                             0:math.floor(w / char_bound_width) * char_bound_width]
 
@@ -83,6 +86,10 @@ def main():
     if args.invert_color:
         converted = invert_image(converted)
     cv2.imwrite(args.save_path, converted)
+
+    if args.save_chars:
+        ascii_writer = AsciiWriter(p_cts, int(converted.shape[:2][1]/char_bound_width), args.save_chars_path)
+        ascii_writer.save()
 
     elapsed = time.perf_counter() - start
     print(f"Completed: spent {elapsed:.6f} seconds")

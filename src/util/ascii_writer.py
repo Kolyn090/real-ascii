@@ -10,7 +10,7 @@ class AsciiWriter:
         self.save_path = save_path
         p_cts.sort(key=lambda x: (x.top_left[1], x.top_left[0]))
         self.output_folder = 'f_output'
-        self.chars_file = 'chars'
+        self.chars_file = 'chars.txt'
 
     def save(self):
         if not os.path.exists(self.save_path):

@@ -5,17 +5,21 @@ import time
 
 import cv2
 import argparse
-import shutil
 import numpy as np
 
 from contour import contour
-from trace import assemble_template, get_original_image
+from trace import assemble_template
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../util')))
 from static import increase_contrast, invert_image  # type: ignore
 from slicer import Slicer  # type: ignore
-from writer import Writer  # type: ignore
+from writer import Writer, PositionalCharTemplate  # type: ignore
 from arg_util import TraceArgUtil, ShadeArgUtil, ColorArgUtil  # type: ignore
 from palette_template import PaletteTemplate  # type: ignore
+from ascii_writer import AsciiWriter  # type: ignore
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../shade')))
+from gradient_writer import GradientWriter  # type: ignore
 
 def main():
     start = time.perf_counter()
@@ -50,6 +54,8 @@ def main():
     parser.add_argument('--palette_path', type=str, default='')
 
     parser.add_argument('--invert_color', action='store_true')
+    parser.add_argument('--save_chars', action='store_true')
+    parser.add_argument('--save_chars_path', type=str, default='./')
 
     args = parser.parse_args()
     template = assemble_template(args)
@@ -72,8 +78,8 @@ def main():
                 contrast_factor=args.contrast_factor,
                 contrast_window_size=args.contrast_window_size,
                 invert_color=True)
-    t1, ct1 = trace(c1, template, img, args)
-    t2, _ = trace(c2, template, img, args)
+    t1, ct1, p_ct1 = trace(c1, template, img, args)
+    t2, _, p_ct2 = trace(c2, template, img, args)
 
     converted = t2.copy()
     mask = np.all(ct1[..., :3] < 255, axis=2)
@@ -84,11 +90,18 @@ def main():
 
     cv2.imwrite(args.save_path, converted)
 
+    gradient_writer = GradientWriter([template], args.max_workers)
+    p_cts = gradient_writer._stack([p_ct1, p_ct2])
+
+    if args.save_chars:
+        ascii_writer = AsciiWriter(p_cts, int(converted.shape[:2][1]/template.char_bound[0]), args.save_chars_path)
+        ascii_writer.save()
+
     elapsed = time.perf_counter() - start
     print(f"Completed: spent {elapsed:.6f} seconds")
 
 def trace(contour_img: np.ndarray, template: PaletteTemplate,
-          original_img: np.ndarray, args) -> tuple[np.ndarray, np.ndarray]:
+          original_img: np.ndarray, args) -> tuple[np.ndarray, np.ndarray, list[PositionalCharTemplate]]:
     contour_img = TraceArgUtil.resize(args.resize_method, contour_img, args.resize_factor)
     h, w = contour_img.shape[:2]
     slicer = Slicer(args.max_workers)
@@ -96,7 +109,7 @@ def trace(contour_img: np.ndarray, template: PaletteTemplate,
     char_bound_height = template.char_bound[1]
     cells = slicer.slice(contour_img, (char_bound_width, char_bound_height))
     writer = template.create_writer(args.max_workers)
-    converted = writer.match_cells(cells, w, h)[0]
+    converted, p_cts = writer.match_cells(cells, w, h)
     converted = converted[0:math.floor(h / char_bound_height) * char_bound_height,
                             0:math.floor(w / char_bound_width) * char_bound_width]
     converted_copy = converted.copy()
@@ -112,7 +125,7 @@ def trace(contour_img: np.ndarray, template: PaletteTemplate,
 
     if color_converted is not None:
         converted = color_converted
-    return converted, converted_copy
+    return converted, converted_copy, p_cts
 
 if __name__ == '__main__':
     main()

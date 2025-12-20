@@ -89,6 +89,8 @@ python trace.py --image_path ./contour/contour_180_260.png --resize_factor 8 --p
 | --palette_path        | Use a palette. Only the first template will be used. The values in template can be overridden with explicit arguments. |
 | --color_option        | The option to color the image. Check below for available options.                                                      |
 | --original_image_path | REQUIRED if you are doing `color_option=original`.                                                                     |
+| --save_chars          | If included, the characters will be saved to a file.                                                                   |
+| --save_chars_path     | The path to save the characters. Check out the 'f_output' folder for the results.                                      |
 
 **resize_method**
 
@@ -182,6 +184,8 @@ python trace_join.py ^
 | --vector_top_k         | Only used if the matching method is 'vector'. Only compare the smaller image to the k best candidates.                 |
 | --palette_path         | Use a palette. Only the first template will be used. The values in template can be overridden with explicit arguments. |
 | --color_option         | The option to color the image. Check below for available options.                                                      |
+| --save_chars           | If included, the characters will be saved to a file.                                                                   |
+| --save_chars_path      | The path to save the characters. Check out the 'f_output' folder for the results.                                      |
 
 **resize_method**
 
