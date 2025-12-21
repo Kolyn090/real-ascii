@@ -67,7 +67,8 @@ def main():
     writer = template.create_writer(args.max_workers)
     converted, p_cts = writer.match_cells(cells, w, h)
     converted = converted[0:math.floor(h / char_bound_height) * char_bound_height,
-                            0:math.floor(w / char_bound_width) * char_bound_width]
+                          0:math.floor(w / char_bound_width) * char_bound_width]
+    converted = invert_image(converted)
 
     original_img = get_original_image(args)
     original_img = original_img[0:math.floor(h / char_bound_height) * char_bound_height,
@@ -76,8 +77,7 @@ def main():
     color_result = ColorArgUtil.color_image(args.color_option,
                                             converted,
                                             original_img,
-                                            (char_bound_width, char_bound_height),
-                                            invert_ascii=True)
+                                            (char_bound_width, char_bound_height))
     color_blocks = None
     p_cs = []
     if color_result is not None:

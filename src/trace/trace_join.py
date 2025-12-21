@@ -121,12 +121,11 @@ def trace_join(contour1: np.ndarray, contour2: np.ndarray,
     original_img = TraceArgUtil.resize(args.resize_method, original_img, args.resize_factor)
     original_img = original_img[0:math.floor(h / char_bound_height) * char_bound_height,
                                 0:math.floor(w / char_bound_width) * char_bound_width]
-
+    converted1 = invert_image(converted1)
     color_result1 = ColorArgUtil.color_image(args.color_option,
                                              converted1,
                                              original_img,
-                                             (char_bound_width, char_bound_height),
-                                             invert_ascii=True)
+                                             (char_bound_width, char_bound_height))
     color_blocks1 = None
     p_cs1 = []
     if color_result1 is not None:

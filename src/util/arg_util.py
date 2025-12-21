@@ -69,8 +69,7 @@ class ColorArgUtil:
     def color_image(option: str,
                     ascii_img: np.ndarray,
                     original_img: np.ndarray,
-                    cell_size: tuple[int, int],
-                    invert_ascii=False) -> tuple[np.ndarray, np.ndarray, list[PositionalColor]] | None:
+                    cell_size: tuple[int, int]) -> tuple[np.ndarray, np.ndarray, list[PositionalColor]] | None:
         if ascii_img is None or original_img is None:
             return None
 
@@ -78,18 +77,15 @@ class ColorArgUtil:
             case 'original':
                 return ColorArgUtil.color_original(ascii_img,
                                                    original_img,
-                                                   cell_size,
-                                                   invert_ascii)
+                                                   cell_size)
         return None
 
     @staticmethod
     def color_original(ascii_img: np.ndarray,
                        original_img: np.ndarray,
-                       cell_size: tuple[int, int],
-                       invert_ascii: bool) \
+                       cell_size: tuple[int, int]) \
             -> tuple[np.ndarray, np.ndarray, list[PositionalColor]]:
         color_blocks, p_cs = process_image_blocks(original_img, cell_size, average_color_block)
-        ascii_img = invert_image(ascii_img) if invert_ascii else ascii_img
         color_converted = blend_ascii_with_color(ascii_img, color_blocks, 1)
         color_converted = copy_black_pixels(ascii_img, color_converted)
         return color_converted, color_blocks, p_cs
