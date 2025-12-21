@@ -73,16 +73,20 @@ def main():
     original_img = original_img[0:math.floor(h / char_bound_height) * char_bound_height,
                                 0:math.floor(w / char_bound_width) * char_bound_width]
 
-    color_converted, color_blocks, p_cs = ColorArgUtil.color_image(args.color_option,
-                                                                   converted,
-                                                                   original_img,
-                                                                   (char_bound_width, char_bound_height),
-                                                                   invert_ascii=True)
-    if color_converted is not None:
+    color_result = ColorArgUtil.color_image(args.color_option,
+                                            converted,
+                                            original_img,
+                                            (char_bound_width, char_bound_height),
+                                            invert_ascii=True)
+    color_blocks = None
+    p_cs = []
+    if color_result is not None:
+        color_converted, color_blocks, p_cs = color_result
         converted = color_converted
 
     if args.invert_color:
-        color_blocks = invert_image(color_blocks)
+        if color_blocks is not None:
+            color_blocks = invert_image(color_blocks)
         converted = invert_image(converted)
 
     cv2.imwrite(args.save_path, converted)

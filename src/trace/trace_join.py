@@ -79,25 +79,19 @@ def main():
                 contrast_factor=args.contrast_factor,
                 contrast_window_size=args.contrast_window_size,
                 invert_color=True)
-    t1, ct1, p_ct1, p_c1, color_blocks1 = trace(c1, template, img, args)
-    t2, _, p_ct2, p_c2, color_blocks2 = trace(c2, template, img, args)
 
-    converted = t2.copy()
-    mask = np.all(ct1[..., :3] < 255, axis=2)
-    converted[mask, :3] = t1[mask, :3]
-
-    gradient_writer = GradientWriter([template], args.max_workers)
-    p_cts, p_cs = stack(p_ct1, p_ct2, p_c1, p_c2, gradient_writer)
+    p_cs, color_blocks, stacked, converted = trace_join(c1, c2, template, img, args)
 
     if args.invert_color:
-        color_blocks1 = invert_image(color_blocks1)
+        if color_blocks is not None:
+            color_blocks = invert_image(color_blocks)
         converted = invert_image(converted)
 
     cv2.imwrite(args.save_path, converted)
 
     if args.save_chars:
-        reassign_positional_colors(p_cs, color_blocks1)
-        ascii_writer = AsciiWriter(p_cts,
+        reassign_positional_colors(p_cs, color_blocks)
+        ascii_writer = AsciiWriter(stacked,
                                    p_cs,
                                    int(converted.shape[:2][1]/template.char_bound[0]),
                                    args.save_chars_path)
@@ -106,43 +100,66 @@ def main():
     elapsed = time.perf_counter() - start
     print(f"Completed: spent {elapsed:.6f} seconds")
 
-def stack(p_ct1: list[PositionalCharTemplate],
-          p_ct2: list[PositionalCharTemplate],
-          p_c1: list[PositionalColor],
-          p_c2: list[PositionalColor],
-          gradient_writer: GradientWriter) \
-        -> tuple[list[PositionalCharTemplate], list[PositionalColor]]:
-    p_cts = gradient_writer._stack([p_ct1, p_ct2])
-    p_cs = p_c1  # p_c1 and p_c2 are the same, just choose one
-    return p_cts, p_cs
+def trace_join(contour1: np.ndarray, contour2: np.ndarray,
+               template: PaletteTemplate, original_img: np.ndarray, args):
+    contour1 = TraceArgUtil.resize(args.resize_method, contour1, args.resize_factor)
+    contour2 = TraceArgUtil.resize(args.resize_method, contour2, args.resize_factor)
+    h, w = contour1.shape[:2]
 
-def trace(contour_img: np.ndarray, template: PaletteTemplate,
-          original_img: np.ndarray, args) \
-        -> tuple[np.ndarray, np.ndarray, list[PositionalCharTemplate], list[PositionalColor], np.ndarray]:
-    contour_img = TraceArgUtil.resize(args.resize_method, contour_img, args.resize_factor)
-    h, w = contour_img.shape[:2]
     slicer = Slicer(args.max_workers)
     char_bound_width = template.char_bound[0]
     char_bound_height = template.char_bound[1]
-    cells = slicer.slice(contour_img, (char_bound_width, char_bound_height))
+    cells1 = slicer.slice(contour1, (char_bound_width, char_bound_height))
+    cells2 = slicer.slice(contour2, (char_bound_width, char_bound_height))
+
     writer = template.create_writer(args.max_workers)
-    converted, p_cts = writer.match_cells(cells, w, h)
-    converted = converted[0:math.floor(h / char_bound_height) * char_bound_height,
+    converted1, p_cts1 = writer.match_cells(cells1, w, h)
+    converted1 = converted1[0:math.floor(h / char_bound_height) * char_bound_height,
                             0:math.floor(w / char_bound_width) * char_bound_width]
-    converted_copy = converted.copy()
+    converted2, p_cts2 = writer.match_cells(cells2, w, h)
+
     original_img = TraceArgUtil.resize(args.resize_method, original_img, args.resize_factor)
     original_img = original_img[0:math.floor(h / char_bound_height) * char_bound_height,
                                 0:math.floor(w / char_bound_width) * char_bound_width]
 
-    color_converted, color_blocks, p_cs = ColorArgUtil.color_image(args.color_option,
-                                                                   converted,
-                                                                   original_img,
-                                                                   (char_bound_width, char_bound_height),
-                                                                   invert_ascii=True)
+    color_result1 = ColorArgUtil.color_image(args.color_option,
+                                             converted1,
+                                             original_img,
+                                             (char_bound_width, char_bound_height),
+                                             invert_ascii=True)
+    color_blocks1 = None
+    p_cs1 = []
+    if color_result1 is not None:
+        _, color_blocks1, p_cs1 = color_result1
 
-    if color_converted is not None:
-        converted = color_converted
-    return converted, converted_copy, p_cts, p_cs, color_blocks
+    # Current goal: place ascii 1 on top of ascii 2
+    stacked = stack_ascii_p_cts(p_cts2, p_cts1)
+
+    # To be returned
+    p_cs = p_cs1
+    color_blocks = color_blocks1
+
+    gradient_writer = GradientWriter([template], args.max_workers)
+    converted = gradient_writer.stack_to_img(stacked, w, h)
+
+    color_result = ColorArgUtil.color_image(args.color_option,
+                                               converted,
+                                               original_img,
+                                               (char_bound_width, char_bound_height))
+
+    if color_result is not None:
+        converted, _, _ = color_result
+
+    return p_cs, color_blocks, stacked, converted
+
+def stack_ascii_p_cts(bottom: list[PositionalCharTemplate], top: list[PositionalCharTemplate]) \
+        -> list[PositionalCharTemplate]:
+    table: dict[tuple[int, int], PositionalCharTemplate] = dict()
+    table = {p_ct.top_left: p_ct for p_ct in bottom}
+    for p_ct in top:
+        if p_ct.char_template.char != ' ':
+            table[p_ct.top_left] = p_ct
+    return list(table.values())
 
 if __name__ == '__main__':
     main()

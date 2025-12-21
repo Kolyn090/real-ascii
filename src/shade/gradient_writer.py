@@ -37,7 +37,22 @@ class GradientWriter:
             h, w = img.shape[:2]
             _, p_cts = writer.match_cells(cells, w, h)
             p_ct_lists.append(p_cts)
-        stacks = self._stack(p_ct_lists)
+        stacks = self.stack(p_ct_lists)
+        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
+        #
+        # with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+        #     list(executor.map(lambda cell: self._paste_to_img(cell, result_img), stacks))
+        #
+        # result_img = invert_image(result_img)
+        # large_char_bound = self.get_large_char_bound()
+        # result_img = result_img[0:math.floor(h / large_char_bound[1]) * large_char_bound[1],
+        #                         0:math.floor(w / large_char_bound[0]) * large_char_bound[0]]
+        # return result_img, stacks
+        return self.stack_to_img(stacks, w, h), stacks
+
+    def stack_to_img(self, p_cts: list[PositionalCharTemplate], w: int, h: int) \
+            -> np.ndarray:
+        stacks = p_cts
         result_img = np.zeros((h, w, 3), dtype=np.uint8)
 
         with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
@@ -46,8 +61,8 @@ class GradientWriter:
         result_img = invert_image(result_img)
         large_char_bound = self.get_large_char_bound()
         result_img = result_img[0:math.floor(h / large_char_bound[1]) * large_char_bound[1],
-                                0:math.floor(w / large_char_bound[0]) * large_char_bound[0]]
-        return result_img, stacks
+                     0:math.floor(w / large_char_bound[0]) * large_char_bound[0]]
+        return result_img
 
     def get_large_char_bound(self) -> tuple[int, int]:
         result_width = 0
@@ -65,7 +80,7 @@ class GradientWriter:
         bottom_right_x = top_left[0] + template.shape[1]
         result_img[top_left[1]:bottom_right_y, top_left[0]:bottom_right_x] = template
 
-    def _stack(self, p_ct_lists: list[list[PositionalCharTemplate]]) -> list[PositionalCharTemplate]:
+    def stack(self, p_ct_lists: list[list[PositionalCharTemplate]]) -> list[PositionalCharTemplate]:
         self._assign_template_rank()
         table: dict[tuple[int, int], CharTemplate] = dict()
         for p_ct_list in reversed(p_ct_lists):
@@ -85,6 +100,7 @@ class GradientWriter:
                       top_left: tuple[int, int],
                       char_template: CharTemplate):
         if top_left in table:
+            # Prioritize the character in the lower rank (0 is the highest rank)
             if self._compare_template_char(char_template.char, table[top_left].char):
                 table[top_left] = char_template
         else:
@@ -107,5 +123,5 @@ class GradientWriter:
             for char in template.chars:
                 self.template_rank[char] = count
                 count += 1
-        # Force space to have the lowest rank
+        # Force space to have the guaranteed highest rank
         self.template_rank[" "] = -1

@@ -50,15 +50,19 @@ def main():
     converted, p_cts = gradient_writer.match(w, h)
 
     large_char_bound = gradient_writer.get_large_char_bound()
-    color_converted, color_blocks, p_cs = ColorArgUtil.color_image(args.color_option,
-                                                                   converted,
-                                                                   o_img,
-                                                                   large_char_bound)
-    if color_converted is not None:
+    color_result = ColorArgUtil.color_image(args.color_option,
+                                            converted,
+                                            o_img,
+                                            large_char_bound)
+    color_blocks = None
+    p_cs = []
+    if color_result is not None:
+        color_converted, color_blocks, p_cs = color_result
         converted = color_converted
 
     if args.invert_color:
-        color_blocks = invert_image(color_blocks)
+        if color_blocks is not None:
+            color_blocks = invert_image(color_blocks)
         converted = invert_image(converted)
 
     cv2.imwrite(args.save_path, converted)
