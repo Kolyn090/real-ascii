@@ -1,0 +1,60 @@
+{
+  "name": "palette_braille_gradient",
+  "templates": [
+    {
+      "layer": 0,
+      "chars": " ",
+      "font": "C:/Windows/Fonts/seguisym.ttf",
+      "font_size": 24,
+      "char_bound_width": 18,
+      "char_bound_height": 28,
+      "approx_ratio": 1,
+      "vector_top_k": 5,
+      "match_method": "fast"
+    },
+    {
+      "layer": 1,
+      "chars": "⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐",
+      "font": "C:/Windows/Fonts/seguisym.ttf",
+      "font_size": 24,
+      "char_bound_width": 18,
+      "char_bound_height": 28,
+      "approx_ratio": 1,
+      "vector_top_k": 5,
+      "match_method": "fast"
+    },
+    {
+      "layer": 2,
+      "chars": "⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟",
+      "font": "C:/Windows/Fonts/seguisym.ttf",
+      "font_size": 24,
+      "char_bound_width": 18,
+      "char_bound_height": 28,
+      "approx_ratio": 1,
+      "vector_top_k": 5,
+      "match_method": "fast"
+    },
+    {
+      "layer": 3,
+      "chars": "⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯",
+      "font": "C:/Windows/Fonts/seguisym.ttf",
+      "font_size": 24,
+      "char_bound_width": 18,
+      "char_bound_height": 28,
+      "approx_ratio": 1,
+      "vector_top_k": 5,
+      "match_method": "fast"
+    },
+    {
+      "layer": 4,
+      "chars": "⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿",
+      "font": "C:/Windows/Fonts/seguisym.ttf",
+      "font_size": 24,
+      "char_bound_width": 18,
+      "char_bound_height": 28,
+      "approx_ratio": 1,
+      "vector_top_k": 5,
+      "match_method": "fast"
+    }
+  ]
+}

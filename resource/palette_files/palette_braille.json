@@ -1,0 +1,16 @@
+{
+  "name": "palette_braille",
+  "templates": [
+    {
+      "layer": 0,
+      "chars": "⠁⠂⠃⠄⠅⠆⠇⠈⠉⠊⠋⠌⠍⠎⠏⠐⠑⠒⠓⠔⠕⠖⠗⠘⠙⠚⠛⠜⠝⠞⠟⠠⠡⠢⠣⠤⠥⠦⠧⠨⠩⠪⠫⠬⠭⠮⠯⠰⠱⠲⠳⠴⠵⠶⠷⠸⠹⠺⠻⠼⠽⠾⠿",
+      "font": "C:/Windows/Fonts/seguisym.ttf",
+      "font_size": 24,
+      "char_bound_width": 18,
+      "char_bound_height": 28,
+      "approx_ratio": 1,
+      "vector_top_k": 5,
+      "match_method": "fast"
+    }
+  ]
+}

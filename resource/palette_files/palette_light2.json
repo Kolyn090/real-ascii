@@ -1,0 +1,27 @@
+{
+  "name": "palette_light2",
+  "templates": [
+    {
+      "layer": 0,
+      "chars": " ",
+      "font": "C:/Windows/Fonts/consolab.ttf",
+      "font_size": 24,
+      "char_bound_width": 13,
+      "char_bound_height": 22,
+      "approx_ratio": 1,
+      "vector_top_k": 5,
+      "match_method": "fast"
+    },
+    {
+      "layer": 1,
+      "chars": ",.`'-_/\\|",
+      "font": "C:/Windows/Fonts/consolab.ttf",
+      "font_size": 24,
+      "char_bound_width": 13,
+      "char_bound_height": 22,
+      "approx_ratio": 1,
+      "vector_top_k": 5,
+      "match_method": "fast"
+    }
+  ]
+}
