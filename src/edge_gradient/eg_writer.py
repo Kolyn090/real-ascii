@@ -10,7 +10,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../util
 from palette_template import PaletteTemplate  # type: ignore
 from static import increase_contrast, resize_bilinear, smooth_colors, to_grayscale  # type: ignore
 from arg_util import ShadeArgUtil  # type: ignore
-from writer import PositionalCharTemplate  # type: ignore
+from char_template import PositionalCharTemplate  # type: ignore
 
 class EdgeGradientWriter:
     def __init__(self,
