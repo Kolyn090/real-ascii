@@ -13,7 +13,8 @@ from trace import assemble_template
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../util')))
 from static import increase_contrast, invert_image  # type: ignore
 from slicer import Slicer  # type: ignore
-from writer import Writer, PositionalCharTemplate  # type: ignore
+from char_template import PositionalCharTemplate  # type: ignore
+from writer import Writer  # type: ignore
 from arg_util import TraceArgUtil, ShadeArgUtil, ColorArgUtil  # type: ignore
 from palette_template import PaletteTemplate  # type: ignore
 from ascii_writer import AsciiWriter  # type: ignore
