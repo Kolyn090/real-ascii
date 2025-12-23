@@ -91,6 +91,21 @@ def to_binary_strong(img: np.ndarray) -> np.ndarray:
 
     return binary
 
+def to_binary_middle(img: np.ndarray, threshold=127) -> np.ndarray:
+    if img.ndim == 3:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    elif img.ndim != 2:
+        raise ValueError(f"Unsupported image shape: {img.shape}")
+
+    binary = np.zeros(img.shape, dtype=np.uint8)
+    binary[img > threshold] = 255
+    binary[img <= threshold] = 0
+
+    # Hard guarantee
+    assert binary.ndim == 2
+
+    return binary
+
 def test():
     img_path = '../../resource/f_input/prof.jpg'
     img = cv2.imread(img_path)

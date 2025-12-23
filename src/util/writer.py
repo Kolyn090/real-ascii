@@ -3,7 +3,7 @@ import math
 import numpy as np
 from typing import Callable
 from PIL.ImageFont import FreeTypeFont
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 from concurrent.futures import ThreadPoolExecutor
 
 from slicer import Cell
@@ -237,17 +237,17 @@ class Writer:
     def _assign_char_templates(self, chars: list[str]):
         result = []
         for char in chars:
-            char_template = self._create_char_template(char, self.image_font)
+            char_template = self._create_char_template(char)
             result.append(char_template)
         self.char_templates = result
-        self.space_template = self._create_char_template(" ", self.image_font)
+        self.space_template = self._create_char_template(" ")
 
-    def _create_char_template(self, char: str, image_font: ImageFont) -> CharTemplate:
+    def _create_char_template(self, char: str) -> CharTemplate:
         self.approx_size = (math.floor(self.char_bound[0] * self.approx_ratio),
                             math.floor(self.char_bound[1] * self.approx_ratio))
         img = Image.new("RGB", self.char_bound, "white")
         draw = ImageDraw.Draw(img)
-        draw.text((0, 0), char, font=image_font, fill="black")
+        draw.text((0, 0), char, font=self.image_font, fill="black")
 
         template = np.array(img)
         template_binary = to_binary_strong(template)

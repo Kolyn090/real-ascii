@@ -61,12 +61,12 @@ def main():
 def create_image():
     os.makedirs("f_output", exist_ok=True)
 
-    start = (10, -10)
-    bound = (806, 616)
-    word = "STAR\nWARS"
+    start = (0, 0)
+    bound = (1500, 616)
+    word = "abc\\/-#$$$@^"
     # font_path = "C:/Windows/Fonts/ariblk.ttf"
-    font_path = "C:/Windows/Fonts/segoeui.ttf"
-    font_size = 240
+    font_path = "C:/Windows/Fonts/arial.ttf"
+    font_size = 24
     font = ImageFont.truetype(font_path, font_size)
 
     img = Image.new("RGB", bound, "white")
