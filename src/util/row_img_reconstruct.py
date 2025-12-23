@@ -1,7 +1,7 @@
 import numpy as np
 from writer import CharTemplate
 
-def reconstruct2(long_img: np.ndarray, char_templates: list[CharTemplate]) \
+def reconstruct_by_ct(long_img: np.ndarray, char_templates: list[CharTemplate]) \
         -> tuple[list[CharTemplate], float] | None:
     long_img = long_img.astype(bool)
     # key = index
@@ -47,7 +47,7 @@ def reconstruct2(long_img: np.ndarray, char_templates: list[CharTemplate]) \
 
     return seq, dp[W]
 
-def reconstruct(long_img: np.ndarray, short_imgs: list[np.ndarray]) -> tuple[list[np.ndarray], float] | None:
+def reconstruct_by_img(long_img: np.ndarray, short_imgs: list[np.ndarray]) -> tuple[list[np.ndarray], float] | None:
     long_img = long_img.astype(bool)
     short_imgs = [t.astype(bool) for t in short_imgs]
 

@@ -7,7 +7,7 @@ from PIL import Image, ImageDraw, ImageFont
 from PIL.ImageFont import FreeTypeFont
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../')))
-from row_img_reconstruct import reconstruct, reconstruct2  # type: ignore
+from row_img_reconstruct import reconstruct_by_ct  # type: ignore
 from static import (to_binary_strong, to_grayscale, increase_contrast,  # type: ignore
                     resize_nearest_neighbor, to_binary_middle)  # type: ignore
 from writer import CharTemplate  # type: ignore
@@ -20,17 +20,17 @@ def test_from_complete_example():
     font_path = "C:/Windows/Fonts/arial.ttf"
     font_size = 24
     chars = {
-        " ": (6, char_bound_height),
-        "a": (11, 12),
-        "b": (11, 18),
-        "c": (11, 12),
-        "\\": (11, 20),
-        "/": (11, 20),
-        "-": (8, 2),
-        "#": (14, 16),
-        "$": (11, 21),
-        "@": (22, 19),
-        "^": (12, 10)
+        " ": (6, 0),
+        "a": (11, 0),
+        "b": (11, 0),
+        "c": (11, 0),
+        "\\": (11, 0),
+        "/": (11, 0),
+        "-": (8, 0),
+        "#": (14, 0),
+        "$": (11, 0),
+        "@": (22, 0),
+        "^": (12, 0)
     }
     # Uniform height
     chars = {key: (val[0]+2*gap, char_bound_height) for key, val in chars.items()}
@@ -64,7 +64,7 @@ def test_from_complete_example():
 
     rows = []
     for long_img in long_imgs:
-        reconstructed = reconstruct2(long_img, char_templates)
+        reconstructed = reconstruct_by_ct(long_img, char_templates)
         seq, score = reconstructed
         seq = [ct.img for ct in seq]
         rows.append(concat_images_left_to_right(seq))
