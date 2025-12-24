@@ -1,4 +1,5 @@
 from writer import Writer
+from flow_writer import FlowWriter
 from PIL.ImageFont import FreeTypeFont
 
 class PaletteTemplate:
@@ -30,6 +31,17 @@ class PaletteTemplate:
             vector_top_k=self.vector_top_k,
             chars=self.chars,
             override_widths=self.override_widths
+        )
+
+    def create_flow_writer(self, max_workers: int) -> FlowWriter:
+        return FlowWriter(
+            chars=self.chars,
+            char_bound=self.char_bound,
+            override_widths=self.override_widths,
+            image_font=self.image_font,
+            gap=1,
+            flow_match_method='fast',
+            binary_threshold=90
         )
 
     def __str__(self):

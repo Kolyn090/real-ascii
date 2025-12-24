@@ -81,13 +81,11 @@ def create_char_template(char: str,
     bbox = draw.textbbox((0, 0), char, font=image_font)
 
     text_w = bbox[2] - bbox[0]
-    # text_h = bbox[3] - bbox[1]
 
     img_w, img_h = img.size
 
-    # Center position
+    # Center horizontally
     x = (img_w - text_w) // 2
-    # y = (img_h - text_h) // 2 - bbox[1]
 
     draw.text((x, 0), char, font=image_font, fill="black")
 

@@ -46,7 +46,9 @@ class ShadeArgUtil:
         def parse_template(obj: dict) -> PaletteTemplate:
             override_widths = None
             if "override_widths" in obj:
-                override_widths = obj["override_widths"]
+                override_widths = dict()
+                for item in obj["override_widths"]:
+                    override_widths[item["char"]] = item["width"]
 
             return PaletteTemplate(
                 obj["layer"],
