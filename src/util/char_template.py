@@ -18,6 +18,17 @@ class CharTemplate:
         self.img_small = img_small
         self.img_projection = img_projection
 
+    def __eq__(self, other):
+        return isinstance(other, CharTemplate) and \
+            (self.char, self.image_font.path, self.char_bound) == \
+            (other.char, other.image_font.path, other.char_bound)
+
+    def __hash__(self):
+        return hash((self.char, self.image_font.path, self.char_bound))
+
+    def __str__(self):
+        return f"{{'{self.char}'{self.char_bound}}}"
+
 class PositionalCharTemplate:
     def __init__(self,
                  char_template: CharTemplate,

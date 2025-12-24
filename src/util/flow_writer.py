@@ -46,9 +46,9 @@ class FlowWriter:
             seq, score = reconstructed
             seqs.extend(seq)
             seq = [ct.char_template.img for ct in seq]
-            rows.append(self._concat_images_left_to_right(seq))
+            rows.append(self.concat_images_left_to_right(seq))
             row_num += 1
-        final_img = self._concat_images_top_to_bottom(rows, pad_color=(255, 255, 255))
+        final_img = self.concat_images_top_to_bottom(rows, pad_color=(255, 255, 255))
         return final_img, seqs
 
     @staticmethod
@@ -60,7 +60,7 @@ class FlowWriter:
         return rows
 
     @staticmethod
-    def _concat_images_left_to_right(images: list[np.ndarray]) -> np.ndarray:
+    def concat_images_left_to_right(images: list[np.ndarray]) -> np.ndarray:
         """
         Concatenates a list of images (all same height) horizontally (left to right).
         """
@@ -74,7 +74,7 @@ class FlowWriter:
         return concatenated
 
     @staticmethod
-    def _concat_images_top_to_bottom(images: list[np.ndarray], pad_color=(0, 0, 0)) -> np.ndarray:
+    def concat_images_top_to_bottom(images: list[np.ndarray], pad_color=(0, 0, 0)) -> np.ndarray:
         """
         Concatenates images vertically. If widths differ, pad them to the max width.
 
@@ -154,7 +154,7 @@ class FlowWriter:
                 if self.flow_match_method == 'fast':
                     c = np.count_nonzero(region != tile_crop)
                 else:  # slow
-                    c = self._mse_similarity(region, tile_crop)
+                    c = self._mse(region, tile_crop)
 
                 if dp[x] + c < dp[nx]:
                     dp[nx] = dp[x] + c
@@ -172,16 +172,14 @@ class FlowWriter:
         return seq, dp[W]
 
     @staticmethod
-    def _mse_similarity(img1: np.ndarray, img2: np.ndarray) -> float:
+    def _mse(img1: np.ndarray, img2: np.ndarray) -> float:
         # img1 = img1.astype(np.float32)
         # img2 = img2.astype(np.float32)
 
         # Assume both are grayscale
         mse = np.mean((img1 - img2) ** 2)
 
-        # convert to similarity: 1 = identical, 0 = totally different
-        max_mse = 255 ** 2
-        return 1.0 - min(mse / max_mse, 1.0)
+        return mse / (255.0 ** 2)
 
     def _create_char_template(self, char: str) -> CharTemplate:
         char_bound = self._get_char_bound(char)

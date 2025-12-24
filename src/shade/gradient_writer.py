@@ -1,6 +1,8 @@
 import os
 import sys
 import math
+
+import cv2
 import numpy as np
 from concurrent.futures import ThreadPoolExecutor
 
@@ -24,6 +26,10 @@ class GradientWriter:
 
     def assign_gradient_imgs(self, img_gray: np.ndarray, thresholds_gamma: float):
         self.gradient_imgs = divide(img_gray, len(self.templates), thresholds_gamma)
+        # count = 0
+        # for gradient_img in self.gradient_imgs:
+        #     cv2.imwrite(f"test_writer/gradient_{count}.png", gradient_img)
+        #     count += 1
 
     def match(self, w: int, h: int) -> tuple[np.ndarray, list[PositionalCharTemplate]]:
         p_ct_lists: list[list[PositionalCharTemplate]] = []
@@ -37,6 +43,11 @@ class GradientWriter:
             h, w = img.shape[:2]
             _, p_cts = writer.match_cells(cells, w, h)
             p_ct_lists.append(p_cts)
+
+            # Test only
+            # med_img = self.stack_to_img(p_cts, w, h)
+            # cv2.imwrite(f"test_writer/med_{i}.png", med_img)
+
         stacks = self.stack(p_ct_lists)
         # result_img = np.zeros((h, w, 3), dtype=np.uint8)
         #
