@@ -17,13 +17,13 @@ from gradient_divide import divide  # type: ignore
 
 def test():
     max_workers = 16
-    resize_factor = 2
+    resize_factor = 4
     contrast_factor = 1
     thresholds_gamma = 0.15
     sigma_s = 1
     sigma_r = 0.6
 
-    image = cv2.imread("../../resource/f_input/ultraman-nexus.png")
+    image = cv2.imread("../../resource/imgs/monalisa.jpg")
     image = resize_nearest_neighbor(image, resize_factor)
     image = increase_contrast(image, contrast_factor)
     image = smooth_colors(image, sigma_s, sigma_r)
@@ -58,12 +58,12 @@ def test():
 def get_char_weight(palettes: list[PaletteTemplate]) -> dict[str, int]:
     result = dict()
 
-    count = 0
-    for palette in palettes:
-        for char in palette.chars:
+    for i in range(len(palettes)):
+        for j in range(len(palettes[i].chars)):
+            char = palettes[i].chars[j]
             if char not in result:
-                result[char] = count
-                count += 1
+                result[char] = j * 2 + i
+
     return result
 
 def stack(layers: list[list[PositionalCharTemplate]],
@@ -89,12 +89,14 @@ def stack(layers: list[list[PositionalCharTemplate]],
 
     horizontals = []
     for y, row_layers in row_table.items():
+        print(f"===============y: {y}===================")
         tiling = overlay(row_layers, char_weight, image_width)
         p_cts = [p_ct for p_ct, _, _ in tiling]
         imgs = [p_ct.char_template.img for p_ct in p_cts]
         horizontal = FlowWriter.concat_images_left_to_right(imgs)
         horizontals.append(horizontal)
     final_img = FlowWriter.concat_images_top_to_bottom(horizontals, (255, 255, 255))
+    final_img = invert_image(final_img)
     cv2.imwrite("jx_files/final_img.png", final_img)
 
     # count = 0
@@ -256,12 +258,17 @@ def apply_offset(pos_maps: list[list[tuple[PositionalCharTemplate, int, int]]],
 
     for i in range(len(last_indices_spanning_short_imgs)):
         last_index_spanning_short_imgs = last_indices_spanning_short_imgs[i]
+        if last_index_spanning_short_imgs == -1:
+            continue
+
         pos_map = pos_maps[i]
         next_last = last_index_spanning_short_imgs + 1
         if next_last < len(pos_map):
             first_out_span = pos_map[next_last]
             first_out_span_start = first_out_span[1]
             diff_to_best_end = first_out_span_start - best_end
+
+            # print(f"Layer: {i}, Start: {first_out_span_start}, Next Last: {next_last}")
 
             # Now adding 'diff_to_best_end' to all (start, end) in out span
             for j in range(next_last, len(pos_map)):
@@ -336,6 +343,7 @@ def find_best_offset_choice(
         char_weight_sum = calculate_char_weight_sum(char_weight, pos_map, begin, e-begin)
         curr_layer_weight = layer_weight[i]
         choice_score = calculate_choice_score(offset_mse, char_weight_sum, curr_layer_weight)
+        # print(math.log2(offset_mse) if offset_mse != 0 else 0, char_weight_sum * 10, curr_layer_weight * 10)
         if choice_score > high_score:
             high_score = choice_score
             result = i
@@ -343,7 +351,7 @@ def find_best_offset_choice(
 
 def calculate_choice_score(offset_mse: int, char_weight_sum: int, curr_layer_weight: int) \
     -> float:
-    return char_weight_sum + curr_layer_weight - offset_mse
+    return char_weight_sum * 5 + curr_layer_weight * 3 - offset_mse
 
 def calculate_char_weight_sum(char_weight: dict[str, int],
                               pos_map: list[tuple[PositionalCharTemplate, int, int]],
