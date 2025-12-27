@@ -168,7 +168,7 @@ class FlowWriter:
 
         x = W
         while x > 0:
-            seq.insert(0, PositionalCharTemplate(choice[x], (x, row_num * self.char_bound[1])))
+            seq.insert(0, PositionalCharTemplate(choice[x], (x-choice[x].char_bound[0], row_num * self.char_bound[1])))
             x = prev[x]
 
         return seq, dp[W]

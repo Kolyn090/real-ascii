@@ -18,11 +18,11 @@ def test():
     max_workers = 16
     resize_factor = 8
     contrast_factor = 1
-    thresholds_gamma = 0.15
+    thresholds_gamma = 0.13
     sigma_s = 1
     sigma_r = 0.6
 
-    image = cv2.imread("../../resource/imgs/monalisa.jpg")
+    image = cv2.imread("../../resource/f_input/ultraman-nexus.png")
     image = resize_nearest_neighbor(image, resize_factor)
     image = increase_contrast(image, contrast_factor)
     image = smooth_colors(image, sigma_s, sigma_r)
@@ -53,7 +53,7 @@ def test():
         layers.append(p_cts)
 
     char_weight = get_char_weight(palettes)
-    char_weight[' '] = -10
+    char_weight[' '] = -10000
     stack_test(layers, char_weight, resize_factor * image.shape[:2][1])
 
 def get_char_weight(palettes: list[PaletteTemplate]) -> dict[str, int]:
@@ -86,7 +86,7 @@ def stack(layers: list[list[PositionalCharTemplate]],
     horizontals = []
     for y, row_layers in row_table.items():
         print(f"===============y: {y}===================")
-        tiling = stack_overlay(row_layers, char_weight, image_width)
+        tiling = overlay(row_layers, char_weight, image_width)
         p_cts = [p_ct for p_ct, _, _ in tiling]
         imgs = [p_ct.char_template.img_binary for p_ct in p_cts]
         horizontal = FlowWriter.concat_images_left_to_right(imgs)
@@ -115,7 +115,9 @@ def stack_test(layers: list[list[PositionalCharTemplate]],
     print(len(transitional_horizontals))
     for y, row_layers in row_table.items():
         print(f"===============y: {y}===================")
-        tilings = stack_overlay_test(row_layers, char_weight, image_width)  # transitional
+        # tilings = stack_overlay_test(list(reversed(row_layers))[:2], char_weight, image_width)  # transitional
+        # tilings = stack_overlay_test(list(reversed(row_layers)), char_weight, image_width)
+        tilings = stack_overlay_test(row_layers, char_weight, image_width)
 
         for i in range(len(tilings)):
             tiling = tilings[i]
@@ -256,26 +258,53 @@ def overlay(row_layers: list[list[PositionalCharTemplate]],
         if last_of_best_in_span == -1:
             return result
 
-        # y = pos_maps[1][0][0].top_left[1]
-        # if y == 3136:
-        #     print("[Offset non]: ", end='')
-        #     copy = make_copy_of_chars_in_range(pos_maps[1], begin+1, 100)
-        #     print_chars(copy)
-
         new_extend = pos_maps[best_choice][first_of_best_in_span : last_of_best_in_span + 1]
         result.extend(new_extend)
 
         best_pos_map = pos_maps[best_choice]
         best_end: int = best_pos_map[last_of_best_in_span][2]
-        apply_offset(pos_maps, last_indices_spanning_short_imgs, best_end, False)
+        # apply_offset(pos_maps, last_indices_spanning_short_imgs, best_end, False)
 
-        # if y == 3136:
-        #     print("[Offset yes]: ", end='')
-        #     copy = make_copy_of_chars_in_range(pos_maps[1], begin+1, 100)
+        y = pos_maps[0][0][0].top_left[1]
+        # if y == 728:
+        #     # print("[Offset yes]: ", end='')
+        #     copy = make_copy_of_chars_in_range(pos_maps[0], begin, 100)
+        #     print_chars(copy)
+        #     copy = make_copy_of_chars_in_range(pos_maps[1], begin, 100)
         #     print_chars(copy)
 
-        begin = best_end
+        begin = determine_new_begin(pos_maps, best_end, char_weight)
+        diff = begin - best_end
+        if diff > 0:
+            result.append(make_filler(diff, pos_maps[0][0][0].char_template.char_bound[1], best_end, y))
 
+    return result
+
+def make_filler(width: int, height: int, start: int, y: int) -> tuple[PositionalCharTemplate, int, int]:
+    char_template = CharTemplate("filler", None, (width, height),
+                                 np.full((height, width), 255, dtype=np.uint8),
+                                 to_binary_strong(np.full((height, width), 255, dtype=np.uint8)),
+                                 np.full((height, width), 255, dtype=np.uint8),
+                                 np.full((height, width), 255, dtype=np.uint8))
+    return PositionalCharTemplate(char_template, (start, y)), start, start + width
+
+def determine_new_begin(pos_maps: list[list[tuple[PositionalCharTemplate, int, int]]],
+                        best_end: int,
+                        char_weight: dict[str, int]) -> int:
+    result = best_end
+    highest_char_val = -float('inf')
+
+    for pos_map in pos_maps:
+        for p_ct, s, e in pos_map:
+            if s >= best_end:
+                # Determine the value of char
+                char = p_ct.char_template.char
+                if char in char_weight:
+                    char_val = char_weight[char]
+                    if char_val > highest_char_val:
+                        highest_char_val = char_val
+                        result = s
+                break
     return result
 
 def make_copy_of_chars_in_range(pos_map: list[tuple[PositionalCharTemplate, int, int]],
@@ -432,7 +461,7 @@ def find_best_offset_choice(
 
     y = pos_maps[last_best_choice][0][0].top_left[1]
 
-    # if y == 3136:
+    # if y == 728:
     #     print("***************")
     #     for item in debug:
     #         print(f"[Begin: {item[0]}, End: {item[1]}, Chars: {item[2]}, Char Weight: {item[3]}, Char Layer: {item[4]}, Coherence: {item[6]}, Offset: {item[5]}]")
@@ -445,7 +474,7 @@ def calculate_choice_score(offset_mse: int,
                            curr_layer_weight: int,
                            coherence_score) \
     -> float:
-    return char_weight_sum * 50 + curr_layer_weight * 150 - offset_mse * 15 + coherence_score * 50
+    return char_weight_sum * 50 + curr_layer_weight * 150 - offset_mse * 10 + coherence_score * 5
 
 def calculate_char_weight_sum(char_weight: dict[str, int],
                               pos_map: list[tuple[PositionalCharTemplate, int, int]],
