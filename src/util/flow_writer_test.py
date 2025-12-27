@@ -1,7 +1,6 @@
 import os
 import sys
 import cv2
-import math
 import numpy as np
 from arg_util import ShadeArgUtil
 from palette_template import PaletteTemplate
@@ -23,7 +22,7 @@ def test():
     sigma_s = 1
     sigma_r = 0.6
 
-    image = cv2.imread("../../resource/f_input/ultraman-nexus.png")
+    image = cv2.imread("../../resource/imgs/monalisa.jpg")
     image = resize_nearest_neighbor(image, resize_factor)
     image = increase_contrast(image, contrast_factor)
     image = smooth_colors(image, sigma_s, sigma_r)
@@ -54,7 +53,7 @@ def test():
         layers.append(p_cts)
 
     char_weight = get_char_weight(palettes)
-    char_weight[' '] = -1000
+    char_weight[' '] = -10
     stack_test(layers, char_weight, resize_factor * image.shape[:2][1])
 
 def get_char_weight(palettes: list[PaletteTemplate]) -> dict[str, int]:
@@ -237,6 +236,7 @@ def overlay(row_layers: list[list[PositionalCharTemplate]],
     last_best_choice = -1
     while begin <= image_width:
         len_longest_short_img_from_begin = find_len_longest_short_img_from_begin(pos_maps, begin)
+
         last_indices_spanning_short_imgs = find_last_indices_spanning_short_imgs(pos_maps,
                                                                                  begin,
                                                                                  len_longest_short_img_from_begin)
@@ -256,17 +256,44 @@ def overlay(row_layers: list[list[PositionalCharTemplate]],
         if last_of_best_in_span == -1:
             return result
 
-        # y = pos_maps[best_choice][last_of_best_in_span][0].top_left[1]
+        # y = pos_maps[1][0][0].top_left[1]
+        # if y == 3136:
+        #     print("[Offset non]: ", end='')
+        #     copy = make_copy_of_chars_in_range(pos_maps[1], begin+1, 100)
+        #     print_chars(copy)
 
         new_extend = pos_maps[best_choice][first_of_best_in_span : last_of_best_in_span + 1]
         result.extend(new_extend)
 
         best_pos_map = pos_maps[best_choice]
         best_end: int = best_pos_map[last_of_best_in_span][2]
-        apply_offset(pos_maps, last_indices_spanning_short_imgs, best_end)
+        apply_offset(pos_maps, last_indices_spanning_short_imgs, best_end, False)
+
+        # if y == 3136:
+        #     print("[Offset yes]: ", end='')
+        #     copy = make_copy_of_chars_in_range(pos_maps[1], begin+1, 100)
+        #     print_chars(copy)
+
         begin = best_end
 
     return result
+
+def make_copy_of_chars_in_range(pos_map: list[tuple[PositionalCharTemplate, int, int]],
+                                begin: int,
+                                span_len: int):
+    over = begin + span_len
+    stored = []
+    for p_ct, s, e in pos_map:
+        if s >= begin and e <= over:
+            stored.append((p_ct, s, e))
+    return stored
+
+def print_chars(pos_map: list[tuple[PositionalCharTemplate, int, int]]):
+    stored = []
+    for p_ct, s, e in pos_map:
+        stored.append(f"{p_ct.char_template.char}(x: {p_ct.top_left[0]}, w: {p_ct.char_template.char_bound[0]}, s: {s}, e: {e})")
+    stored_join = ",".join(stored)
+    print(f"{stored_join}")
 
 def get_index_start_from_begin(pos_map: list[tuple[PositionalCharTemplate, int, int]],
                                begin: int) -> int:
@@ -278,7 +305,8 @@ def get_index_start_from_begin(pos_map: list[tuple[PositionalCharTemplate, int, 
 
 def apply_offset(pos_maps: list[list[tuple[PositionalCharTemplate, int, int]]],
                  last_indices_spanning_short_imgs: list[int],
-                 best_end: int):
+                 best_end: int,
+                 debug=False):
     """
 
     :param pos_maps:
@@ -303,7 +331,10 @@ def apply_offset(pos_maps: list[list[tuple[PositionalCharTemplate, int, int]]],
         if next_last < len(pos_map):
             first_out_span = pos_map[next_last]
             first_out_span_start = first_out_span[1]
-            diff_to_best_end = first_out_span_start - best_end
+            diff_to_best_end = best_end - first_out_span_start
+
+            if debug:
+                print(f"diff: {diff_to_best_end}")
 
             # print(f"Layer: {i}, Start: {first_out_span_start}, Next Last: {next_last}")
 
@@ -354,12 +385,13 @@ def find_offset_mse(
     for i in range(len(last_span_indices)):
         last_span_index = last_span_indices[i]
         pos_map = pos_maps[i]
-        if last_span_index != -1:
-            next_last = last_span_index + 1
-            if next_last < len(pos_map):
-                next_last_short_img = pos_map[next_last]
-                s = next_last_short_img[1]
-                result += (s - over) * (s - over)
+        if last_span_index == -1:
+            continue
+        next_last = last_span_index + 1
+        if next_last < len(pos_map):
+            next_last_short_img = pos_map[next_last]
+            s = next_last_short_img[1]
+            result += (s - over) * (s - over)
     return result
 
 def find_best_offset_choice(
@@ -372,17 +404,24 @@ def find_best_offset_choice(
     high_score = -float('inf')
     result = 0
 
+    debug = []
+
     for i in range(len(last_indices_spanning_short_imgs)):
         last_index_spanning_short_imgs = last_indices_spanning_short_imgs[i]
+        if last_index_spanning_short_imgs == -1:
+            continue
+
         pos_map = pos_maps[i]
         last_short_img = pos_map[last_index_spanning_short_imgs]
         e = last_short_img[2]
         offset_mse = find_offset_mse(pos_maps, begin, e-begin, last_indices_spanning_short_imgs)
-        char_weight_sum = calculate_char_weight_sum(char_weight, pos_map, begin, e-begin)
+        char_weight_sum, chars = calculate_char_weight_sum(char_weight, pos_map, begin, e-begin)
         curr_layer_weight = layer_weight[i]
 
         coherence_score = 1 if last_best_choice == i else 0
-
+        chars_join = ",".join(chars)
+        debug.append((begin, e, f"[{chars_join}]", char_weight_sum, curr_layer_weight, offset_mse, coherence_score))
+        # print(f"Begin: {begin}, End: {e}", f"[{chars_join}]", char_weight_sum * 50, curr_layer_weight * 10, -offset_mse, coherence_score * 50)
         choice_score = calculate_choice_score(offset_mse,
                                               char_weight_sum,
                                               curr_layer_weight,
@@ -390,6 +429,15 @@ def find_best_offset_choice(
         if choice_score > high_score:
             high_score = choice_score
             result = i
+
+    y = pos_maps[last_best_choice][0][0].top_left[1]
+
+    # if y == 3136:
+    #     print("***************")
+    #     for item in debug:
+    #         print(f"[Begin: {item[0]}, End: {item[1]}, Chars: {item[2]}, Char Weight: {item[3]}, Char Layer: {item[4]}, Coherence: {item[6]}, Offset: {item[5]}]")
+    #     print("***************")
+
     return result
 
 def calculate_choice_score(offset_mse: int,
@@ -397,21 +445,23 @@ def calculate_choice_score(offset_mse: int,
                            curr_layer_weight: int,
                            coherence_score) \
     -> float:
-    return char_weight_sum * 50 + curr_layer_weight * 10 - offset_mse * 5 + coherence_score * 50
+    return char_weight_sum * 50 + curr_layer_weight * 150 - offset_mse * 15 + coherence_score * 50
 
 def calculate_char_weight_sum(char_weight: dict[str, int],
                               pos_map: list[tuple[PositionalCharTemplate, int, int]],
                               begin: int,
-                              span_len: int) -> int:
+                              span_len: int) -> tuple[int, list[str]]:
     over = begin + span_len
     result = 0
+    chars = []
 
     for p_ct, s, e in pos_map:
         if s >= begin and e <= over:
             char = p_ct.char_template.char
             if char in char_weight:
                 result += char_weight[char]
-    return result
+                chars.append(char)
+    return result, chars
 
 if __name__ == '__main__':
     test()
