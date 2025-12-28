@@ -16,7 +16,7 @@ from gradient_divide import divide  # type: ignore
 
 def test():
     max_workers = 16
-    resize_factor = 4
+    resize_factor = 8
     contrast_factor = 1
     thresholds_gamma = 0.17
     sigma_s = 1
@@ -111,7 +111,7 @@ def stack_test(layers: list[list[PositionalCharTemplate]],
 
     print(char_weight)
 
-    test_len = 2
+    test_len = 6
     transitional_horizontals: dict[int, list[np.ndarray]] = {i: [] for i in range(test_len-1)}
     print(len(transitional_horizontals))
     for y, row_layers in row_table.items():
@@ -123,7 +123,7 @@ def stack_test(layers: list[list[PositionalCharTemplate]],
         for i in range(len(tilings)):
             tiling = tilings[i]
             p_cts = [p_ct for p_ct, _, _ in tiling]
-            imgs = [p_ct.char_template.img_binary for p_ct in p_cts]
+            imgs = [p_ct.char_template.img for p_ct in p_cts]
             horizontal = FlowWriter.concat_images_left_to_right(imgs)
             transitional_horizontals[i].append(horizontal)
 
@@ -132,33 +132,33 @@ def stack_test(layers: list[list[PositionalCharTemplate]],
         final_img = invert_image(final_img)
         cv2.imwrite(f"jx_files/final_img_{idx}.png", final_img)
 
-def merge_nonwhite(images, fill_value=255):
-    if not images:
-        raise ValueError("No images given")
-
-    H = images[0].shape[0]
-    is_rgb = (images[0].ndim == 3)
-
-    for img in images:
-        if img.shape[0] != H:
-            raise ValueError("Images must have same height")
-        if (img.ndim == 3) != is_rgb:
-            raise ValueError("Don't mix grayscale and RGB images")
-
-    max_w = max(img.shape[1] for img in images)
-
-    if is_rgb:
-        merged = np.full((H, max_w, 3), fill_value, dtype=np.uint8)
-        for img in images:
-            w = img.shape[1]
-            merged[:, :w] = np.minimum(merged[:, :w], img)
-    else:
-        merged = np.full((H, max_w), fill_value, dtype=np.uint8)
-        for img in images:
-            w = img.shape[1]
-            merged[:, :w] = np.minimum(merged[:, :w], img)
-
-    return merged
+# def merge_nonwhite(images, fill_value=255):
+#     if not images:
+#         raise ValueError("No images given")
+#
+#     H = images[0].shape[0]
+#     is_rgb = (images[0].ndim == 3)
+#
+#     for img in images:
+#         if img.shape[0] != H:
+#             raise ValueError("Images must have same height")
+#         if (img.ndim == 3) != is_rgb:
+#             raise ValueError("Don't mix grayscale and RGB images")
+#
+#     max_w = max(img.shape[1] for img in images)
+#
+#     if is_rgb:
+#         merged = np.full((H, max_w, 3), fill_value, dtype=np.uint8)
+#         for img in images:
+#             w = img.shape[1]
+#             merged[:, :w] = np.minimum(merged[:, :w], img)
+#     else:
+#         merged = np.full((H, max_w), fill_value, dtype=np.uint8)
+#         for img in images:
+#             w = img.shape[1]
+#             merged[:, :w] = np.minimum(merged[:, :w], img)
+#
+#     return merged
 
 # Caution: the following code only take care of one row!
 
@@ -181,32 +181,32 @@ def build_position_maps(row_layers: list[list[PositionalCharTemplate]]) \
         result.append(intervals)
     return result
 
-def stack_overlay(row_layers: list[list[PositionalCharTemplate]],
-            char_weight: dict[str, int],
-            image_width: int) \
-        -> list[tuple[PositionalCharTemplate, int, int]]:
-    """
-    Stack overlay is a more advanced way of overlay. Rather than applying overlay to
-    all layers, it first applies to layers 1 and 2 and get output A, then applies to
-    A and 3 and so on...
-    :param row_layers:
-    :param char_weight:
-    :param image_width:
-    :return:
-    """
-    output: list[PositionalCharTemplate] = row_layers[0]
-    result: list[tuple[PositionalCharTemplate, int, int]] = []
-    for i in range(1, len(row_layers)):
-        row_layer = row_layers[i]
-        new_row_layers = [output, row_layer]
-        overlay_result = overlay(new_row_layers, char_weight, image_width)
-        output = [p_ct for p_ct, s, e in overlay_result]
-        result = overlay_result
-
-    if len(result) == 0:
-        result = build_position_maps([output])[0]
-
-    return result
+# def stack_overlay(row_layers: list[list[PositionalCharTemplate]],
+#             char_weight: dict[str, int],
+#             image_width: int) \
+#         -> list[tuple[PositionalCharTemplate, int, int]]:
+#     """
+#     Stack overlay is a more advanced way of overlay. Rather than applying overlay to
+#     all layers, it first applies to layers 1 and 2 and get output A, then applies to
+#     A and 3 and so on...
+#     :param row_layers:
+#     :param char_weight:
+#     :param image_width:
+#     :return:
+#     """
+#     output: list[PositionalCharTemplate] = row_layers[0]
+#     result: list[tuple[PositionalCharTemplate, int, int]] = []
+#     for i in range(1, len(row_layers)):
+#         row_layer = row_layers[i]
+#         new_row_layers = [output, row_layer]
+#         overlay_result = overlay(new_row_layers, char_weight, image_width)
+#         output = [p_ct for p_ct, s, e in overlay_result]
+#         result = overlay_result
+#
+#     if len(result) == 0:
+#         result = build_position_maps([output])[0]
+#
+#     return result
 
 def stack_overlay_test(row_layers: list[list[PositionalCharTemplate]],
             char_weight: dict[str, int],
@@ -270,16 +270,30 @@ def overlay(row_layers: list[list[PositionalCharTemplate]],
                                                                                  begin,
                                                                                  len_longest_short_img_from_begin)
 
-        # TODO: find out why the final result is not continuous
         best_choice: int = find_best_offset_choice(pos_maps,
                                                   begin,
                                                   char_weight,
                                                   layer_weight,
                                                   last_indices_spanning_short_imgs,
                                                   last_best_choice)  # This is index of layer
+
         last_best_choice = best_choice
         first_of_best_in_span = get_index_start_from_begin(pos_maps[best_choice], begin)  # This is index of short image
         last_of_best_in_span = last_indices_spanning_short_imgs[best_choice]  # This is index of short image
+
+        y = pos_maps[0][0][0].top_left[1]
+        # if y == 336:
+        #     # print("[Offset yes]: ", end='')
+        #     copy = make_copy_of_chars_in_range(pos_maps[0], begin, 100)
+        #     print_chars(copy)
+        #     copy = make_copy_of_chars_in_range(pos_maps[1], begin, 100)
+        #     print_chars(copy)
+
+        best_start = pos_maps[best_choice][first_of_best_in_span][1]
+        diff = best_start - begin
+        if diff > 0:
+            result.append(make_filler(diff, pos_maps[0][0][0].char_template.char_bound[1], begin, y))
+            # print(diff, pos_maps[0][0][0].char_template.char_bound[1], begin, y, f"new_begin={begin}")
 
         if last_of_best_in_span == -1:
             last_of_best_in_span = first_of_best_in_span
@@ -294,28 +308,23 @@ def overlay(row_layers: list[list[PositionalCharTemplate]],
         best_end: int = best_pos_map[last_of_best_in_span][2]
         # apply_offset(pos_maps, last_indices_spanning_short_imgs, best_end, False)
 
-        y = pos_maps[0][0][0].top_left[1]
-        # if y == 728:
-        #     # print("[Offset yes]: ", end='')
-        #     copy = make_copy_of_chars_in_range(pos_maps[0], begin, 100)
-        #     print_chars(copy)
-        #     copy = make_copy_of_chars_in_range(pos_maps[1], begin, 100)
-        #     print_chars(copy)
-
         begin = determine_new_begin(pos_maps, best_end, char_weight)
         diff = begin - best_end
         if diff > 0:
             result.append(make_filler(diff, pos_maps[0][0][0].char_template.char_bound[1], best_end, y))
-            print(diff, pos_maps[0][0][0].char_template.char_bound[1], best_end, y, f"new_begin={begin}")
+            # print(diff, pos_maps[0][0][0].char_template.char_bound[1], best_end, y, f"new_begin={begin}")
 
     return result
 
 def make_filler(width: int, height: int, start: int, y: int) -> tuple[PositionalCharTemplate, int, int]:
+    img = np.full((height, width, 3), (255, 255, 255), dtype=np.uint8)
+    img_bin = to_grayscale(img)
+    img_bin = to_binary_strong(img_bin)
     char_template = CharTemplate("filler", None, (width, height),
-                                 np.full((height, width), 255, dtype=np.uint8),
-                                 to_binary_strong(np.full((height, width), 255, dtype=np.uint8)),
-                                 np.full((height, width), 255, dtype=np.uint8),
-                                 np.full((height, width), 255, dtype=np.uint8))
+                                 img,
+                                 img_bin,
+                                 img_bin,
+                                 img_bin)
     return PositionalCharTemplate(char_template, (start, y)), start, start + width
 
 def determine_new_begin(pos_maps: list[list[tuple[PositionalCharTemplate, int, int]]],
@@ -491,7 +500,7 @@ def find_best_offset_choice(
 
     y = pos_maps[last_best_choice][0][0].top_left[1]
 
-    # if y == 728:
+    # if y == 336:
     #     print("***************")
     #     for item in debug:
     #         print(f"[Begin: {item[0]}, End: {item[1]}, Chars: {item[2]}, Char Weight: {item[3]}, Char Layer: {item[4]}, Coherence: {item[6]}, Offset: {item[5]}]")
