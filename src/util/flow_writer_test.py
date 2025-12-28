@@ -16,9 +16,9 @@ from gradient_divide import divide  # type: ignore
 
 def test():
     max_workers = 16
-    resize_factor = 8
+    resize_factor = 4
     contrast_factor = 1
-    thresholds_gamma = 0.13
+    thresholds_gamma = 0.17
     sigma_s = 1
     sigma_r = 0.6
 
@@ -111,13 +111,14 @@ def stack_test(layers: list[list[PositionalCharTemplate]],
 
     print(char_weight)
 
-    transitional_horizontals: dict[int, list[np.ndarray]] = {i: [] for i in range(len(layers)-1)}
+    test_len = 2
+    transitional_horizontals: dict[int, list[np.ndarray]] = {i: [] for i in range(test_len-1)}
     print(len(transitional_horizontals))
     for y, row_layers in row_table.items():
         print(f"===============y: {y}===================")
-        # tilings = stack_overlay_test(list(reversed(row_layers))[:2], char_weight, image_width)  # transitional
+        tilings = stack_overlay_test(row_layers[:test_len], char_weight, image_width)  # transitional
         # tilings = stack_overlay_test(list(reversed(row_layers)), char_weight, image_width)
-        tilings = stack_overlay_test(row_layers, char_weight, image_width)
+        # tilings = stack_overlay_test(row_layers, char_weight, image_width)
 
         for i in range(len(tilings)):
             tiling = tilings[i]
@@ -217,6 +218,7 @@ def stack_overlay_test(row_layers: list[list[PositionalCharTemplate]],
         row_layer = row_layers[i]
         new_row_layers = [output, row_layer]
         overlay_result = overlay(new_row_layers, char_weight, image_width)
+        is_overlay_continuous(overlay_result)
         output = [p_ct for p_ct, s, e in overlay_result]
         result.append(overlay_result)
 
@@ -225,6 +227,28 @@ def stack_overlay_test(row_layers: list[list[PositionalCharTemplate]],
 
     return result
 
+def is_overlay_continuous(pos_map: list[tuple[PositionalCharTemplate, int, int]]):
+    last_s = pos_map[0][1]
+    last_e = pos_map[0][2]
+    last_p_ct = pos_map[0][0]
+    for i in range(1, len(pos_map)-1):
+        p_ct, s, e = pos_map[i]
+        last_w = last_p_ct.char_template.char_bound[0]
+        if s != last_s + last_w:
+            raise Exception(f"Not continuous! "
+                            f"s={s}, "
+                            f"last_s={last_s}, "
+                            f"e={e}, "
+                            f"last_e={last_e}, "
+                            f"p_ct={{char: {p_ct.char_template.char}, width: {p_ct.char_template.char_bound[0]}}}, "
+                            f"last_p_ct={{char: {last_p_ct.char_template.char}, width: {last_p_ct.char_template.char_bound[0]}}}")
+        last_s = s
+        last_e = e
+        last_p_ct = p_ct
+
+        # if p_ct.top_left[0] - s != 0:
+        #     raise Exception(f"Top-left not match, tlx={p_ct.top_left[0]}, s={s}")
+
 def overlay(row_layers: list[list[PositionalCharTemplate]],
             char_weight: dict[str, int],
             image_width: int) \
@@ -232,6 +256,9 @@ def overlay(row_layers: list[list[PositionalCharTemplate]],
     result = []
     pos_maps: list[list[tuple[PositionalCharTemplate, int, int]]] = build_position_maps(row_layers)
     begin = 0
+
+    for pos_map in pos_maps:
+        is_overlay_continuous(pos_map)
 
     layer_weight = {i: i for i in range(len(row_layers))}
 
@@ -242,6 +269,8 @@ def overlay(row_layers: list[list[PositionalCharTemplate]],
         last_indices_spanning_short_imgs = find_last_indices_spanning_short_imgs(pos_maps,
                                                                                  begin,
                                                                                  len_longest_short_img_from_begin)
+
+        # TODO: find out why the final result is not continuous
         best_choice: int = find_best_offset_choice(pos_maps,
                                                   begin,
                                                   char_weight,
@@ -277,6 +306,7 @@ def overlay(row_layers: list[list[PositionalCharTemplate]],
         diff = begin - best_end
         if diff > 0:
             result.append(make_filler(diff, pos_maps[0][0][0].char_template.char_bound[1], best_end, y))
+            print(diff, pos_maps[0][0][0].char_template.char_bound[1], best_end, y, f"new_begin={begin}")
 
     return result
 
