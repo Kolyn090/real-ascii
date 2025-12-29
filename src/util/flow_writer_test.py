@@ -54,7 +54,17 @@ def test():
 
     char_weight = get_char_weight(palettes)
     char_weight[' '] = -10000
+
+    using_char_templates = get_using_char_templates(palettes, max_workers)
     stack_test(layers, char_weight, resize_factor * image.shape[:2][1])
+
+def get_using_char_templates(palettes: list[PaletteTemplate],
+                             max_workers: int) -> set[CharTemplate]:
+    result = []
+    for palette in palettes:
+        flow_writer = palette.create_flow_writer(max_workers)
+        result.extend(flow_writer.char_templates)
+    return set(result)
 
 def get_char_weight(palettes: list[PaletteTemplate]) -> dict[str, int]:
     result = dict()
@@ -131,36 +141,6 @@ def stack_test(layers: list[list[PositionalCharTemplate]],
         final_img = FlowWriter.concat_images_top_to_bottom(horizontals, (255, 255, 255))
         final_img = invert_image(final_img)
         cv2.imwrite(f"jx_files/final_img_{idx}.png", final_img)
-
-# def merge_nonwhite(images, fill_value=255):
-#     if not images:
-#         raise ValueError("No images given")
-#
-#     H = images[0].shape[0]
-#     is_rgb = (images[0].ndim == 3)
-#
-#     for img in images:
-#         if img.shape[0] != H:
-#             raise ValueError("Images must have same height")
-#         if (img.ndim == 3) != is_rgb:
-#             raise ValueError("Don't mix grayscale and RGB images")
-#
-#     max_w = max(img.shape[1] for img in images)
-#
-#     if is_rgb:
-#         merged = np.full((H, max_w, 3), fill_value, dtype=np.uint8)
-#         for img in images:
-#             w = img.shape[1]
-#             merged[:, :w] = np.minimum(merged[:, :w], img)
-#     else:
-#         merged = np.full((H, max_w), fill_value, dtype=np.uint8)
-#         for img in images:
-#             w = img.shape[1]
-#             merged[:, :w] = np.minimum(merged[:, :w], img)
-#
-#     return merged
-
-# Caution: the following code only take care of one row!
 
 def build_position_maps(row_layers: list[list[PositionalCharTemplate]]) \
         -> list[list[tuple[PositionalCharTemplate, int, int]]]:
@@ -315,6 +295,10 @@ def overlay(row_layers: list[list[PositionalCharTemplate]],
             # print(diff, pos_maps[0][0][0].char_template.char_bound[1], best_end, y, f"new_begin={begin}")
 
     return result
+
+def generate_fillers(total_width: int, height: int,
+                     start: int, y: int) -> list[tuple[PositionalCharTemplate, int, int]]:
+    pass
 
 def make_filler(width: int, height: int, start: int, y: int) -> tuple[PositionalCharTemplate, int, int]:
     img = np.full((height, width, 3), (255, 255, 255), dtype=np.uint8)
