@@ -7,7 +7,6 @@ import argparse
 from gradient_writer import GradientWriter
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../util')))
-from slicer import Slicer  # type: ignore
 from writer import Writer  # type: ignore
 from static import (resize_nearest_neighbor, resize_bilinear, invert_image,   # type: ignore
                     floor_fill, increase_contrast, to_grayscale, smooth_colors)  # type: ignore

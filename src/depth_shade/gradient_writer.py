@@ -24,10 +24,6 @@ class GradientWriter:
 
     def assign_gradient_imgs(self, img_gray: np.ndarray, thresholds_gamma: float):
         self.gradient_imgs = divide(img_gray, len(self.templates), thresholds_gamma)
-        # count = 0
-        # for gradient_img in self.gradient_imgs:
-        #     cv2.imwrite(f"test_writer/gradient_{count}.png", gradient_img)
-        #     count += 1
 
     def match(self, w: int, h: int) -> tuple[np.ndarray, list[PositionalCharTemplate]]:
         p_ct_lists: list[list[PositionalCharTemplate]] = []
@@ -42,21 +38,7 @@ class GradientWriter:
             _, p_cts = writer.match_cells(cells, w, h)
             p_ct_lists.append(p_cts)
 
-            # Test only
-            # med_img = self.stack_to_img(p_cts, w, h)
-            # cv2.imwrite(f"test_writer/med_{i}.png", med_img)
-
         stacks = self.stack(p_ct_lists)
-        # result_img = np.zeros((h, w, 3), dtype=np.uint8)
-        #
-        # with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
-        #     list(executor.map(lambda cell: self._paste_to_img(cell, result_img), stacks))
-        #
-        # result_img = invert_image(result_img)
-        # large_char_bound = self.get_large_char_bound()
-        # result_img = result_img[0:math.floor(h / large_char_bound[1]) * large_char_bound[1],
-        #                         0:math.floor(w / large_char_bound[0]) * large_char_bound[0]]
-        # return result_img, stacks
         return self.stack_to_img(stacks, w, h), stacks
 
     def stack_to_img(self, p_cts: list[PositionalCharTemplate], w: int, h: int) \
