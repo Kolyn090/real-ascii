@@ -119,8 +119,6 @@ def stack_test(layers: list[list[PositionalCharTemplate]],
                 row_table[y].append([])
             row_table[y][i].append(p_ct)
 
-    print(char_weight)
-
     test_len = 6
     transitional_horizontals: dict[int, list[np.ndarray]] = {i: [] for i in range(test_len-1)}
     print(len(transitional_horizontals))
@@ -297,7 +295,26 @@ def overlay(row_layers: list[list[PositionalCharTemplate]],
     return result
 
 def generate_fillers(total_width: int, height: int,
-                     start: int, y: int) -> list[tuple[PositionalCharTemplate, int, int]]:
+                     start: int, y: int, references: list[CharTemplate],
+                     lambda_val: float) \
+        -> list[tuple[PositionalCharTemplate, int, int]]:
+    """
+    Multi-objective knapsack.
+    1. Fill the capacity as much as possible (total_width)
+    2. Minimize the value (template weight) difference
+    Objective function:
+    fill_score(S) - lambda * similarity_distance(values(S), values(A))
+    sum(size) <= capacity
+    * lambda = similarity vs fill
+
+    :param lambda_val:
+    :param total_width:
+    :param height:
+    :param start:
+    :param y:
+    :param references:
+    :return:
+    """
     pass
 
 def make_filler(width: int, height: int, start: int, y: int) -> tuple[PositionalCharTemplate, int, int]:
