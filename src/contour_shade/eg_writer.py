@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 
 from eg_divide import divide
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../shade')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../depth_shade')))
 from gradient_writer import GradientWriter  # type: ignore
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../util')))
 from palette_template import PaletteTemplate  # type: ignore

@@ -1,15 +1,15 @@
 # Gallery (Edge Gradient ASCII Filter)
 
-1️⃣ `cd` to `src/edge_gradient`.
+1️⃣ `cd` to `src/contour_shade`.
 
 ---
 
 <p align="center">
-    <img src="../../resource/gallery/edge_gradient/gpe_colored.png" width="400">
+    <img src="../../resource/gallery/contour_shade/gpe_colored.png" width="400">
 </p>
 
 ```commandline
-python edge_gradient.py ^
+python contour_shade.py ^
 --image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
 --resize_factor 4 ^
 --contrast_factor 1 ^
@@ -20,11 +20,11 @@ python edge_gradient.py ^
 ---
 
 <p align="center">
-    <img src="../../resource/gallery/edge_gradient/gpe_colored_invert.png" width="400">
+    <img src="../../resource/gallery/contour_shade/gpe_colored_invert.png" width="400">
 </p>
 
 ```commandline
-python edge_gradient.py ^
+python contour_shade.py ^
 --image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
 --resize_factor 4 ^
 --contrast_factor 1 ^
@@ -149,7 +149,7 @@ lll][[===[]%[]%%**%8]+8%%%&%[BB[*B[+[[i[l]*&*&%%%l[*]]]&[B%l][**[]+[&**l]]*[+l]+
 ```
 
 ```commandline
-python edge_gradient.py ^
+python contour_shade.py ^
 --image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
 --resize_factor 4 ^
 --contrast_factor 1 ^

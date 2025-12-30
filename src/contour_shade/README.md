@@ -1,19 +1,19 @@
-# Edge Gradient ASCII Filter
+# Contour Shade ASCII Filter
 
 This filter renders shading around the edges in the given image.
 Like shade filter, a palette is required. (Might also require more
 manual finetuning than the shade filter)
 
-## 📖 Guide: Gradient ASCII Art
-1️⃣ `cd` to `src/edge_gradient`.
+## 📖 Guide: Contour Shade ASCII Art
+1️⃣ `cd` to `src/contour_shade`.
 
 2️⃣ Set up a palette. Recommended save directory is `resource/palette_files`.
 Check out the [palette tutorial](../../palette_tut.md).
 
-3️⃣ Execute `edge_gradient.py`.
+3️⃣ Execute `contour_shade.py`.
 **Example**:
 ```commandline
-python edge_gradient.py --image_path ../../resource/imgs/tsunami.jpg --resize_factor 8 --contrast_factor 8 --resize_method bilinear --invert_color
+python contour_shade.py --image_path ../../resource/imgs/tsunami.jpg --resize_factor 8 --contrast_factor 8 --resize_method bilinear --invert_color
 ```
 
 **Parameters**

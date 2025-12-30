@@ -10,7 +10,7 @@
 | Invert Image Color | ❌        |
 
 ```commandline
-python edge_gradient.py ^
+python contour_shade.py ^
 --image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
 --resize_factor 1 ^
 --contrast_factor 1 ^
@@ -31,7 +31,7 @@ python edge_gradient.py ^
 | Invert Image Color | ❌        |
 
 ```commandline
-python edge_gradient.py ^
+python contour_shade.py ^
 --image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
 --resize_factor 1 ^
 --color_option original ^
@@ -53,7 +53,7 @@ python edge_gradient.py ^
 | Invert Image Color | ✅        |
 
 ```commandline
-python edge_gradient.py ^
+python contour_shade.py ^
 --image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
 --resize_factor 1 ^
 --color_option original ^
@@ -76,7 +76,7 @@ python edge_gradient.py ^
 | Invert Image Color | ✅        |
 
 ```commandline
-python edge_gradient.py ^
+python contour_shade.py ^
 --image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
 --resize_factor 1 ^
 --invert_color ^
@@ -125,7 +125,7 @@ i',^,!!!,,,;+[_^ii;_^,,i,i,,^;;_i;^-^'i
 | Save ASCII             | ✅        |
 
 ```commandline
-python edge_gradient.py ^
+python contour_shade.py ^
 --image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
 --resize_factor 1 ^
 --save_ascii ^
