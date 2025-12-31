@@ -19,6 +19,7 @@ class Writer:
                  match_method: str,
                  vector_top_k: int,
                  chars: list[str],
+                 smoothing: bool,
                  override_widths: dict[str, int] | None = None,
                  override_weights: dict[tuple[str, int], float] | None = None):
         self.image_font = image_font
@@ -33,6 +34,7 @@ class Writer:
         self.approx_size = (7, 12)
         self.override_widths = override_widths
         self.override_weights = override_weights
+        self.smoothing = smoothing
 
         self._assign_char_templates(chars)
 
@@ -65,11 +67,28 @@ class Writer:
         :return: The most similar template to cell
         """
         most_similar = self.get_most_similar(cell.img)
-        template = most_similar.img
+        if self.smoothing:
+            template = most_similar.img
+        else:
+            template = most_similar.img_binary
         top_left = cell.top_left
-        bottom_right_y = top_left[1] + template.shape[0]
-        bottom_right_x = top_left[0] + template.shape[1]
-        result_img[top_left[1]:bottom_right_y, top_left[0]:bottom_right_x] = template
+        # bottom_right_y = top_left[1] + template.shape[0]
+        # bottom_right_x = top_left[0] + template.shape[1]
+
+        # template: (H, W) or (H, W, 3)
+        h, w = template.shape[:2]
+
+        # ensure template has 3 channels
+        if template.ndim == 2:  # grayscale
+            template_to_paste = np.stack([template] * 3, axis=-1)
+        elif template.ndim == 3 and template.shape[2] == 3:  # already RGB
+            template_to_paste = template
+        else:
+            raise ValueError(f"Unsupported template shape: {template.shape}")
+
+        # paste into result_img
+        result_img[top_left[1]:top_left[1] + h, top_left[0]:top_left[0] + w] = template_to_paste
+
         return PositionalCharTemplate(most_similar, top_left)
 
     def _get_most_similar_slow(self, img: np.ndarray) -> CharTemplate:

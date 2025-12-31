@@ -52,6 +52,7 @@ def main():
     parser.add_argument('--palette_path', type=str, default='')
     parser.add_argument('--save_ascii', action='store_true')
     parser.add_argument('--save_ascii_path', type=str, default='./')
+    parser.add_argument('--smoothing', action='store_true')
 
     args = parser.parse_args()
     template = assemble_template(args)
@@ -64,11 +65,11 @@ def main():
     char_bound_width = template.char_bound[0]
     char_bound_height = template.char_bound[1]
     cells = slicer.slice(img, (char_bound_width, char_bound_height))
-    writer = template.create_writer(args.max_workers)
+    writer = template.create_writer(args.max_workers, args.smoothing)
     converted, p_cts = writer.match_cells(cells, w, h)
     converted = converted[0:math.floor(h / char_bound_height) * char_bound_height,
                           0:math.floor(w / char_bound_width) * char_bound_width]
-    converted = invert_image(converted)
+    # converted = invert_image(converted)
 
     original_img = get_original_image(args)
     if original_img is not None:
@@ -78,7 +79,8 @@ def main():
     color_result = ColorArgUtil.color_image(args.color_option,
                                             converted,
                                             original_img,
-                                            (char_bound_width, char_bound_height))
+                                            (char_bound_width, char_bound_height),
+                                            smoothing=args.smoothing)
     color_blocks = None
     p_cs = []
     if color_result is not None:

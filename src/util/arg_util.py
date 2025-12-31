@@ -78,6 +78,7 @@ class ColorArgUtil:
                        smoothing: bool) \
             -> tuple[np.ndarray, np.ndarray, list[PositionalColor]]:
         color_blocks, p_cs = process_image_blocks(original_img, cell_size, average_color_block)
+        ascii_img = invert_image(ascii_img)
         color_converted = blend_ascii_with_color(ascii_img, color_blocks, 1)
         if smoothing:
             color_converted = blend_pixels(ascii_img, color_converted)

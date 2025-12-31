@@ -54,17 +54,22 @@ An example of contour image:
 2️⃣ Execute `edge_trace.py`.
 **Example**:
 ```commandline
-python edge_trace.py --image_path ./contour/contour_180_260.png --resize_factor 8 --chars file --font C:/Windows/Fonts/consolab.ttf --char_bound_width 13 --char_bound_height 22 --match_method slow 
+python edge_trace.py --image_path ./contour/contour_180_260.png --resize_factor 4 --chars file --font C:/Windows/Fonts/consolab.ttf --char_bound_width 13 --char_bound_height 22 --match_method slow 
 ```
 
 **Japanese Hiragana**:
 ```commandline
-python edge_trace.py --image_path ./contour/contour_240_200.png --resize_factor 8 --chars file --char_bound_height 24 --char_bound_width 22 --font C:/Windows/Fonts/msgothic.ttc --font_size 24 --chars_file_path ../../resource/char_files/chars_file_hiragana.txt --match_method vector --approx_ratio 0.5 --vector_top_k 5 --invert_color
+python edge_trace.py --image_path ./contour/contour_240_200.png --resize_factor 4 --chars file --char_bound_height 24 --char_bound_width 22 --font C:/Windows/Fonts/msgothic.ttc --font_size 24 --chars_file_path ../../resource/char_files/chars_file_hiragana.txt --match_method vector --approx_ratio 0.5 --vector_top_k 5 --invert_color
 ```
 
 **An Example using Palette file**, Check out the [palette tutorial](../../palette_tut.md) if you would like to make your own palette:
 ```commandline
-python edge_trace.py --image_path ./contour/contour_180_260.png --resize_factor 8 --palette_path ../../resource/palette_files/palette_chars.json --match_method slow
+python edge_trace.py --image_path ./contour/contour_180_260.png --resize_factor 4 --palette_path ../../resource/palette_files/palette_chars.json --match_method slow
+```
+
+**If you want to preserve character anti-aliasing**:
+```commandline
+python edge_trace.py --image_path ./contour/contour_180_260.png --resize_factor 4 --palette_path ../../resource/palette_files/palette_chars.json --match_method slow --smoothing
 ```
 
 **Parameters**
@@ -91,6 +96,7 @@ python edge_trace.py --image_path ./contour/contour_180_260.png --resize_factor 
 | --original_image_path | REQUIRED if you are doing `color_option=original`.                                                                     |
 | --save_ascii          | If included, the characters will be saved to a file.                                                                   |
 | --save_ascii_path     | The path to save the characters. Check out the 'ascii_output' folder for the results.                                  |
+| --smoothing           | If included, retain anti-aliasing of the characters.                                                                   |
 
 **resize_method**
 
@@ -146,9 +152,9 @@ python joined_trace.py ^
 --kernel_size 2 ^
 --dilate_iter 1 ^
 --erode_iter 0 ^
---contrast_factor 4 ^
+--contrast_factor 16 ^
 --contrast_window_size 8 ^
---resize_factor 8 ^
+--resize_factor 4 ^
 --resize_method nearest_neighbor ^
 --match_method slow ^
 --palette_path ../../resource/palette_files/palette_chars.json
@@ -186,6 +192,7 @@ python joined_trace.py ^
 | --color_option         | The option to color the image. Check below for available options.                                                      |
 | --save_ascii           | If included, the characters will be saved to a file.                                                                   |
 | --save_ascii_path      | The path to save the characters. Check out the 'ascii_output' folder for the results.                                  |
+| --smoothing            | If included, retain anti-aliasing of the characters.                                                                   |
 
 **resize_method**
 

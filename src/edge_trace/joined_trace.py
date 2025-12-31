@@ -57,6 +57,7 @@ def main():
     parser.add_argument('--invert_color', action='store_true')
     parser.add_argument('--save_ascii', action='store_true')
     parser.add_argument('--save_ascii_path', type=str, default='./')
+    parser.add_argument('--smoothing', action='store_true')
 
     args = parser.parse_args()
     template = assemble_template(args)
@@ -112,7 +113,7 @@ def trace_join(contour1: np.ndarray, contour2: np.ndarray,
     cells1 = slicer.slice(contour1, (char_bound_width, char_bound_height))
     cells2 = slicer.slice(contour2, (char_bound_width, char_bound_height))
 
-    writer = template.create_writer(args.max_workers)
+    writer = template.create_writer(args.max_workers, args.smoothing)
     converted1, p_cts1 = writer.match_cells(cells1, w, h)
     converted1 = converted1[0:math.floor(h / char_bound_height) * char_bound_height,
                             0:math.floor(w / char_bound_width) * char_bound_width]
@@ -121,7 +122,7 @@ def trace_join(contour1: np.ndarray, contour2: np.ndarray,
     original_img = TraceArgUtil.resize(args.resize_method, original_img, args.resize_factor)
     original_img = original_img[0:math.floor(h / char_bound_height) * char_bound_height,
                                 0:math.floor(w / char_bound_width) * char_bound_width]
-    converted1 = invert_image(converted1)
+    # converted1 = invert_image(converted1)
     color_result1 = ColorArgUtil.color_image(args.color_option,
                                              converted1,
                                              original_img,
@@ -138,13 +139,15 @@ def trace_join(contour1: np.ndarray, contour2: np.ndarray,
     p_cs = p_cs1
     color_blocks = color_blocks1
 
-    gradient_writer = GradientWriter([template], args.max_workers)
+    gradient_writer = GradientWriter([template], args.max_workers, args.smoothing)
     converted = gradient_writer.stack_to_img(stacked, w, h)
+    converted = invert_image(converted)
 
     color_result = ColorArgUtil.color_image(args.color_option,
                                                converted,
                                                original_img,
-                                               (char_bound_width, char_bound_height))
+                                               (char_bound_width, char_bound_height),
+                                               smoothing=args.smoothing)
 
     if color_result is not None:
         converted, _, _ = color_result
