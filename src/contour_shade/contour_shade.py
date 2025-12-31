@@ -57,6 +57,7 @@ def main():
                                     args.gx,
                                     args.gy)
     converted, p_cts = eg_writer.match(w, h)
+    converted = invert_image(converted)
 
     large_char_bound = eg_writer.gradient_writer.get_large_char_bound()
     color_result = ColorArgUtil.color_image(args.color_option,

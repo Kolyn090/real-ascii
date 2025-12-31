@@ -13,7 +13,7 @@ Check out the [palette tutorial](../../palette_tut.md).
 3️⃣ Execute `contour_shade.py`.
 **Example**:
 ```commandline
-python contour_shade.py --image_path ../../resource/imgs/tsunami.jpg --resize_factor 8 --contrast_factor 8 --resize_method bilinear --invert_color
+python contour_shade.py --image_path ../../resource/imgs/tsunami.jpg --resize_factor 4 --contrast_factor 16 --resize_method bilinear
 ```
 
 **Parameters**
