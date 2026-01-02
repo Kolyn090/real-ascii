@@ -7,6 +7,7 @@ from PIL.ImageFont import FreeTypeFont
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../util')))
 from char_template import CharTemplate, PositionalCharTemplate  # type: ignore
 from static import to_binary_middle, to_binary_strong  # type: ignore
+from image_padding import pil_pad_columns  # type: ignore
 
 class FlowWriter:
     """
@@ -22,18 +23,20 @@ class FlowWriter:
                  char_bound: tuple[int, int],
                  override_widths: dict[str, int] | None,
                  image_font: FreeTypeFont,
-                 gap: int,
+                 pad: tuple[int, int],
                  flow_match_method: str,
                  binary_threshold=90,
-                 override_weights: dict[tuple[str, int], float] | None = None):
+                 override_weights: dict[tuple[str, int], float] | None = None,
+                 maximum_char_width=60):
         self.char_bound = char_bound
         self.override_widths = override_widths
         self.override_weights = override_weights
         self.image_font = image_font
         self.flow_match_method = flow_match_method
-        self.gap = gap
+        self.pad = pad
         self.binary_threshold = binary_threshold
         self.char_templates = [self._create_char_template(char) for char in chars]
+        self.maximum_char_width = maximum_char_width
 
     def match(self, img: np.ndarray) -> tuple[np.ndarray, list[PositionalCharTemplate]]:
         """
@@ -91,7 +94,6 @@ class FlowWriter:
             raise ValueError("Image list is empty")
 
         # Determine max width and height per image
-        heights = [img.shape[0] for img in images]
         widths = [img.shape[1] for img in images]
         max_width = max(widths)
 
@@ -195,9 +197,7 @@ class FlowWriter:
         if char_bound[0] <= 0:
             # We want to trim the width exactly to the width of the character
             # AKA, no all-white columns should remain
-
-            # Assuming 60 is the maximum char width
-            img = Image.new("RGB", (60, char_bound[1]), "white")
+            img = Image.new("RGB", (self.maximum_char_width, char_bound[1]), "white")
         else:
             img = Image.new("RGB", char_bound, "white")
 
@@ -228,7 +228,7 @@ class FlowWriter:
                 img = img.crop((left, 0, right, img.height))
             # Pad white columns to image.
             # For example, if the width is -1, pad 1 column to both sides of the image
-            img = self._pad_white_columns(img, -char_bound[0])
+            img = pil_pad_columns(img, -char_bound[0])
             final_bound = (img.size[0], char_bound[1])
 
         template = np.array(img)
@@ -245,13 +245,6 @@ class FlowWriter:
             img_projection=template_small.ravel()
         )
         return char_template
-
-    @staticmethod
-    def _pad_white_columns(img: Image.Image, x: int) -> Image.Image:
-        w, h = img.size
-        new_img = Image.new(img.mode, (w + 2 * x, h), "white")
-        new_img.paste(img, (x, 0))
-        return new_img
 
     def _get_char_bound(self, char: str) -> tuple[int, int]:
         if self.override_widths is not None and char in self.override_widths:

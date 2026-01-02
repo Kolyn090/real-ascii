@@ -49,7 +49,7 @@ class PaletteTemplate:
             char_bound=self.char_bound,
             override_widths=self.override_widths,
             image_font=self.image_font,
-            gap=1,
+            pad=(1, 1),
             flow_match_method='fast',
             binary_threshold=90,
             override_weights=self.override_weights

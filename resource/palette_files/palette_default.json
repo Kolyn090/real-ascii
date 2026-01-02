@@ -11,8 +11,8 @@
       "approx_ratio": 0.5,
       "vector_top_k": 5,
       "match_method": "fast",
-      "gap_horizontal": 0,
-      "gap_vertical": 0
+      "pad_horizontal": 0,
+      "pad_vertical": 0
     },
     {
       "layer": 1,
@@ -24,8 +24,8 @@
       "approx_ratio": 0.5,
       "vector_top_k": 5,
       "match_method": "fast",
-      "gap_horizontal": 0,
-      "gap_vertical": 0
+      "pad_horizontal": 0,
+      "pad_vertical": 0
     },
     {
       "layer": 2,
@@ -37,8 +37,8 @@
       "approx_ratio": 0.5,
       "vector_top_k": 5,
       "match_method": "fast",
-      "gap_horizontal": 0,
-      "gap_vertical": 0
+      "pad_horizontal": 0,
+      "pad_vertical": 0
     },
     {
       "layer": 3,
@@ -50,8 +50,8 @@
       "approx_ratio": 0.5,
       "vector_top_k": 5,
       "match_method": "fast",
-      "gap_horizontal": 0,
-      "gap_vertical": 0
+      "pad_horizontal": 0,
+      "pad_vertical": 0
     },
     {
       "layer": 4,
@@ -63,8 +63,8 @@
       "approx_ratio": 0.5,
       "vector_top_k": 5,
       "match_method": "fast",
-      "gap_horizontal": 0,
-      "gap_vertical": 0
+      "pad_horizontal": 0,
+      "pad_vertical": 0
     },
     {
       "layer": 5,
@@ -76,8 +76,8 @@
       "approx_ratio": 0.5,
       "vector_top_k": 5,
       "match_method": "fast",
-      "gap_horizontal": 0,
-      "gap_vertical": 0
+      "pad_horizontal": 0,
+      "pad_vertical": 0
     }
   ]
 }

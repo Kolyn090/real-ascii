@@ -7,7 +7,6 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../util
 from static import (resize_bilinear, increase_contrast,  # type: ignore
                     to_grayscale, smooth_colors)  # type: ignore
 
-
 def divide(img_gray: np.ndarray, n_levels: int, thresholds_gamma: float) -> list[np.ndarray]:
     grad_scaled = img_gray / img_gray.max() * 255.0
     thresholds = compute_equal_pixel_thresholds(img_gray, n_levels, thresholds_gamma)
