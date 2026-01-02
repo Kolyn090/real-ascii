@@ -3,7 +3,7 @@ import sys
 import numpy as np
 
 from flow_writer import FlowWriter
-from np_knapsack import Item, np_knapsack
+from knapsack import Item, item_knapsack
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../util')))
 from palette_template import PaletteTemplate  # type: ignore
@@ -17,7 +17,15 @@ class NonFixedWidthWriter:
                  palettes: list[PaletteTemplate],
                  gradient_imgs: list[np.ndarray],
                  max_workers=16,
-                 antialiasing=False):
+                 antialiasing=False,
+                 filler_range=1,
+                 reference_num=15,
+                 max_num_fill_item=10,
+                 filler_lambda=0.7,
+                 char_weight_sum_factor=1,
+                 curr_layer_weight_factor=1,
+                 offset_mse_factor=1,
+                 coherence_score_factor=1):
         self.palettes = palettes
         self.max_workers = max_workers
         self.gradient_imgs = gradient_imgs
@@ -25,6 +33,14 @@ class NonFixedWidthWriter:
         self.using_char_templates: set[CharTemplate] = set()
         self.char_weights = self._get_char_weights()
         self.antialiasing = antialiasing
+        self.filler_range = filler_range if filler_range >= 1 else 1
+        self.reference_num = reference_num if reference_num >= 0 else 0
+        self.max_num_fill_item = max_num_fill_item if max_num_fill_item >= 0 else 0
+        self.filler_lambda = filler_lambda
+        self.char_weight_sum_factor = char_weight_sum_factor
+        self.curr_layer_weight_factor = curr_layer_weight_factor
+        self.offset_mse_factor = offset_mse_factor
+        self.coherence_score_factor = coherence_score_factor
 
         # Debug
         self.transitional_imgs: list[np.ndarray] = []
@@ -159,8 +175,8 @@ class NonFixedWidthWriter:
 
         last_best_choice = -1
 
-        height = pos_maps[0][0][0].char_template.char_bound[1]
-        base_reference_list = self._get_base_reference_list(1, height)
+        cell_h = pos_maps[0][0][0].char_template.char_bound[1]
+        base_reference_list = self._get_base_reference_list(self.filler_range, cell_h)
         while begin <= width:
             len_longest_short_img_from_begin = self._find_len_longest_short_img_from_begin(pos_maps, begin)
 
@@ -185,7 +201,7 @@ class NonFixedWidthWriter:
             if diff > 0:
                 reference_list = []
                 reference_list.extend(base_reference_list)
-                reference_list.extend(self._get_references(result, 15))
+                reference_list.extend(self._get_references(result, self.reference_num))
                 # result.append(make_filler(diff, pos_maps[0][0][0].char_template.char_bound[1], begin, y))
                 result.extend(self._generate_fillers(diff, begin, y, set(reference_list)))
                 # print(diff, pos_maps[0][0][0].char_template.char_bound[1], begin, y, f"new_begin={begin}")
@@ -201,14 +217,13 @@ class NonFixedWidthWriter:
 
             best_pos_map = pos_maps[best_choice]
             best_end: int = best_pos_map[last_of_best_in_span][2]
-            # apply_offset(pos_maps, last_indices_spanning_short_imgs, best_end, False)
 
             begin = self._determine_new_begin(pos_maps, best_end)
             diff = begin - best_end
             if diff > 0:
                 reference_list = []
                 reference_list.extend(base_reference_list)
-                reference_list.extend(self._get_references(result, 15))
+                reference_list.extend(self._get_references(result, self.reference_num))
                 # result.append(make_filler(diff, pos_maps[0][0][0].char_template.char_bound[1], best_end, y))
                 result.extend(self._generate_fillers(diff, best_end, y, set(reference_list)))
                 # print(diff, pos_maps[0][0][0].char_template.char_bound[1], best_end, y, f"new_begin={begin}")
@@ -285,7 +300,7 @@ class NonFixedWidthWriter:
                                in char_weights else 1, ct.char_bound[0]) for ct
                                in references]
         C = total_width
-        knapsack = np_knapsack(items_a, items_b, C, 1, 10, lambda_val=0.7)
+        knapsack = item_knapsack(items_a, items_b, C, 1, self.max_num_fill_item, lambda_val=self.filler_lambda)
         knapsack = [item.stored for item in knapsack]
 
         # Start generating the fillers (p_ct, start, end)
@@ -419,13 +434,16 @@ class NonFixedWidthWriter:
                 result += (s - over) * (s - over)
         return result
 
-    @staticmethod
-    def _calculate_choice_score(offset_mse: int,
-                               char_weight_sum: int,
-                               curr_layer_weight: int,
-                               coherence_score) \
+    def _calculate_choice_score(self,
+                                offset_mse: int,
+                                char_weight_sum: int,
+                                curr_layer_weight: int,
+                                coherence_score) \
             -> float:
-        return char_weight_sum * 50 + curr_layer_weight * 150 - offset_mse * 10 + coherence_score * 5
+        return (char_weight_sum * self.char_weight_sum_factor +
+                curr_layer_weight * self.curr_layer_weight_factor -
+                offset_mse * self.offset_mse_factor +
+                coherence_score * self.coherence_score_factor)
 
     @staticmethod
     def _calculate_char_weight_sum(char_weight: dict[(str, int), float],

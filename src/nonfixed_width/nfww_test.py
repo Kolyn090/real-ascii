@@ -34,7 +34,13 @@ def test():
 
     palettes = ShadeArgUtil.get_palette_json('../../resource/palette_files/jx_files/palette_test.json')
     gradient_imgs = divide(image, len(palettes), thresholds_gamma)
-    nfww = NonFixedWidthWriter(palettes, gradient_imgs, max_workers)
+    nfww = NonFixedWidthWriter(palettes,
+                               gradient_imgs,
+                               max_workers,
+                               char_weight_sum_factor=50,
+                               curr_layer_weight_factor=150,
+                               offset_mse_factor=10,
+                               coherence_score_factor=5)
 
     print(nfww.char_weights)
 

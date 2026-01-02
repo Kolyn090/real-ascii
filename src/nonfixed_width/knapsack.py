@@ -6,7 +6,7 @@ class Item:
         self.size = size
         self.stored = stored
 
-def np_knapsack(
+def item_knapsack(
     items_a: list[Item],
     items_b: list[Item],
     C: int,
@@ -121,7 +121,7 @@ def test():
     ]
 
     C = 12
-    knapsack = np_knapsack(items_a, items_b, C)
+    knapsack = item_knapsack(items_a, items_b, C)
 
     for item in knapsack:
         print(item.stored, item.value, item.size)
