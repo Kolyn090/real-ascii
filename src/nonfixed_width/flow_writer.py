@@ -27,7 +27,9 @@ class FlowWriter:
                  flow_match_method: str,
                  binary_threshold=90,
                  override_weights: dict[tuple[str, int], float] | None = None,
-                 maximum_char_width=60):
+                 maximum_char_width=60,
+                 max_workers=16,
+                 antialiasing=False):
         self.char_bound = char_bound
         self.override_widths = override_widths
         self.override_weights = override_weights
@@ -35,8 +37,10 @@ class FlowWriter:
         self.flow_match_method = flow_match_method
         self.pad = pad
         self.binary_threshold = binary_threshold
-        self.char_templates = [self._create_char_template(char) for char in chars]
         self.maximum_char_width = maximum_char_width
+        self.antialiasing = antialiasing
+        self.max_workers = max_workers
+        self.char_templates = [self._create_char_template(char) for char in chars]
 
     def match(self, img: np.ndarray) -> tuple[np.ndarray, list[PositionalCharTemplate]]:
         """

@@ -19,7 +19,7 @@ class PaletteTemplate:
                  match_method: str,
                  pad: tuple[int, int],
                  override_widths: dict[str, int] | None = None,
-                 override_weights: dict[tuple[str, int], float] | None = None):
+                 override_weights: dict[str, float] | None = None):
         self.layer = layer
         self.chars = chars
         self.image_font = image_font
@@ -55,7 +55,9 @@ class PaletteTemplate:
             pad=self.pad,
             flow_match_method='fast',
             binary_threshold=90,
-            override_weights=self.override_weights
+            override_weights=self.override_weights,
+            antialiasing=antialiasing,
+            max_workers=max_workers
         )
 
     @staticmethod
@@ -66,18 +68,11 @@ class PaletteTemplate:
             for item in obj["override_widths"]:
                 override_widths[item["char"]] = item["width"]
 
-        char_bound_width = obj["char_bound_width"]
-        def get_char_valid_width(char: str) -> int:
-            if char in override_widths:
-                return override_widths[char]
-            else:
-                return char_bound_width
-
         override_weights = None
         if "override_weights" in obj:
             override_weights = dict()
             for item in obj["override_weights"]:
-                override_weights[(item["char"], get_char_valid_width(item["char"]))] = item["weight"]
+                override_weights[item["char"]] = item["weight"]
 
         return PaletteTemplate(
             obj["layer"],
