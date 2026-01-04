@@ -1,11 +1,13 @@
 # Palette Tutorial
 
 This tutorial describes how to make a palette. To begin with, check out the
-[default palette I made](./resource/palette_files/palette_default.json) first.
+[default palette I made](./resource/palette_files/palette_default_consolab_fast.json) first.
+
+# TODO: update tutorial
 
 ```json
 {
-  "name": "palette_default",
+  "name": "palette_default_consolab_fast",
   "templates": [
     {
       "layer": 0,
@@ -14,8 +16,6 @@ This tutorial describes how to make a palette. To begin with, check out the
       "font_size": 24,
       "char_bound_width": 13,
       "char_bound_height": 22,
-      "approx_ratio": 0.5,
-      "vector_top_k": 5,
       "match_method": "fast"
     },
     {

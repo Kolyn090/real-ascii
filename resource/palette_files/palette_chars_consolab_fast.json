@@ -1,5 +1,5 @@
 {
-  "name": "palette_chars",
+  "name": "palette_chars_consolab_fast",
   "templates": [
     {
       "layer": 0,
@@ -8,11 +8,7 @@
       "font_size": 24,
       "char_bound_width": 13,
       "char_bound_height": 22,
-      "approx_ratio": 0.5,
-      "vector_top_k": 5,
-      "match_method": "fast",
-      "pad_width": 0,
-      "pad_height": 0
+      "match_method": "fast"
     }
   ]
 }

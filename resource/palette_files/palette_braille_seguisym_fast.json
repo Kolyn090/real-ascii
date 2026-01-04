@@ -1,5 +1,5 @@
 {
-  "name": "palette_braille",
+  "name": "palette_braille_seguisym_fast",
   "templates": [
     {
       "layer": 0,
@@ -8,11 +8,7 @@
       "font_size": 24,
       "char_bound_width": 18,
       "char_bound_height": 28,
-      "approx_ratio": 1,
-      "vector_top_k": 5,
-      "match_method": "fast",
-      "pad_width": 0,
-      "pad_height": 0
+      "match_method": "fast"
     }
   ]
 }
