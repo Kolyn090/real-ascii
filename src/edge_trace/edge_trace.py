@@ -11,10 +11,13 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../util
 from slicer import Slicer  # type: ignore
 from writer import Writer  # type: ignore
 from arg_util import TraceArgUtil, ShadeArgUtil, ColorArgUtil  # type: ignore
-from palette_template import PaletteTemplate  # type: ignore
+from palette_template import PaletteTemplate, are_palettes_fixed_width  # type: ignore
 from static import invert_image, resize_exact  # type: ignore
 from color_util import reassign_positional_colors  # type: ignore
 from ascii_writer import AsciiWriter  # type: ignore
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../nonfixed_width')))
+from nonfixed_width_writer import NonFixedWidthWriter  # type: ignore
 
 def main():
     start = time.perf_counter()
@@ -40,6 +43,16 @@ def main():
     parser.add_argument('--original_image_path', type=str, default='')
     parser.add_argument('--pad_width', type=int, default=0)
     parser.add_argument('--pad_height', type=int, default=0)
+    parser.add_argument('--antialiasing', action='store_true')
+
+    # For non-fixed width
+    parser.add_argument('--reference_num', type=int, default=15)
+    parser.add_argument('--max_num_fill_item', type=int, default=10)
+    parser.add_argument('--filler_lambda', type=float, default=0.7)
+    parser.add_argument('--char_weight_sum_factor', type=int, default=50)
+    parser.add_argument('--curr_layer_weight_factor', type=int, default=150)
+    parser.add_argument('--offset_mse_factor', type=int, default=10)
+    parser.add_argument('--coherence_score_factor', type=int, default=5)
 
     # Including, can be overridden with explicit arguments:
     # chars
@@ -61,11 +74,25 @@ def main():
     img = cv2.imread(args.image_path)
     img = TraceArgUtil.resize(args.resize_method, img, args.resize_factor)
 
-    slicer = Slicer(args.max_workers)
-    padded_char_bound = (template.char_bound[0] + 2*template.pad[0], template.char_bound[1] + 2*template.pad[1])
-    cells = slicer.slice(img, padded_char_bound)
-    writer = template.create_writer(args.max_workers, args.antialiasing)
-    converted, p_cts = writer.match_cells(cells)
+    are_fixed = are_palettes_fixed_width([template])
+    if not are_fixed:
+        nfww = NonFixedWidthWriter([template],
+                                   [img],
+                                   args.max_workers,
+                                   reference_num=args.reference_num,
+                                   max_num_fill_item=args.max_num_fill_item,
+                                   filler_lambda=args.filler_lambda,
+                                   char_weight_sum_factor=args.char_weight_sum_factor,
+                                   curr_layer_weight_factor=args.curr_layer_weight_factor,
+                                   offset_mse_factor=args.offset_mse_factor,
+                                   coherence_score_factor=args.coherence_score_factor)
+        converted, p_cts = nfww.stack(img.shape[1])
+    else:
+        slicer = Slicer(args.max_workers)
+        padded_char_bound = (template.char_bound[0] + 2*template.pad[0], template.char_bound[1] + 2*template.pad[1])
+        cells = slicer.slice(img, padded_char_bound)
+        writer = template.create_writer(args.max_workers, args.antialiasing)
+        converted, p_cts = writer.match_cells(cells)
 
     original_img = get_original_image(args)
     if original_img is not None:
@@ -75,7 +102,8 @@ def main():
                                             converted,
                                             original_img,
                                             template.char_bound,
-                                            antialiasing=args.antialiasing)
+                                            antialiasing=args.antialiasing,
+                                            invert_ascii=are_fixed)
     color_blocks = None
     p_cs = []
     if color_result is not None:
