@@ -13,7 +13,7 @@
 ```commandline
 python depth_shade.py ^
 --image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
---resize_factor 1
+--resize_factor 2
 ```
 
 ---
@@ -33,51 +33,8 @@ python depth_shade.py ^
 ```commandline
 python depth_shade.py ^
 --image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
---resize_factor 1 ^
+--resize_factor 2 ^
 --color_option original
-```
-
----
-
-# Test 3
-
-<p align="center">
-    <img src="./imgs/test_3.png" width="400">
-</p>
-
-| Test               | Property |
-|--------------------|----------|
-| Color Image        | ✅        |
-| Invert Image Color | ✅        |
-| ~~Save ASCII~~     | ❌        |
-
-```commandline
-python depth_shade.py ^
---image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
---resize_factor 1 ^
---color_option original ^
---invert_color
-```
-
----
-
-# Test 4
-
-<p align="center">
-    <img src="./imgs/test_4.png" width="400">
-</p>
-
-| Test               | Property |
-|--------------------|----------|
-| Color Image        | ❌        |
-| Invert Image Color | ✅        |
-| ~~Save ASCII~~     | ❌        |
-
-```commandline
-python depth_shade.py ^
---image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
---resize_factor 1 ^
---invert_color
 ```
 
 ---
@@ -125,4 +82,57 @@ python depth_shade.py ^
 --image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
 --resize_factor 1 ^
 --save_ascii
+```
+
+---
+
+# Test 6
+
+<p align="center">
+    <img src="./imgs/test_6.png" width="400">
+</p>
+
+| Test               | Property |
+|--------------------|----------|
+| Color Image        | ✅        |
+| Invert Image Color | ❌        |
+| ~~Save ASCII~~     | ❌        |
+| Anti-aliasing      | ✅        |
+
+```commandline
+python depth_shade.py ^
+--image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
+--resize_factor 2 ^
+--color_option original ^
+--antialiasing
+```
+
+---
+
+# Test 7
+
+<p align="center">
+    <img src="./imgs/test_7.png" width="400">
+</p>
+
+| Test               | Property |
+|--------------------|----------|
+| Color Image        | ✅        |
+| Invert Image Color | ❌        |
+| ~~Save ASCII~~     | ❌        |
+| Fixed Width        | ❌        |
+
+```commandline
+python depth_shade.py ^
+--image_path ../../resource/imgs/girl_with_pearl_earring.jpg ^
+--resize_factor 3 ^
+--thresholds_gamma 0.3 ^
+--sigma_s 1 ^
+--sigma_r 0.6 ^
+--color_option original ^
+--palette_path ../../resource/palette_files/palette_default_6_arial_fast.json ^
+--char_weight_sum_factor 50 ^
+--curr_layer_weight_factor 150 ^
+--offset_mse_factor 10 ^
+--coherence_score_factor 5
 ```

@@ -1,0 +1,217 @@
+{
+  "name": "palette_test_6_arial_fast",
+  "templates": [
+    {
+      "layer": 0,
+      "chars": " ",
+      "font": "C:/Windows/Fonts/arial.ttf",
+      "font_size": 24,
+      "char_bound_width": 6,
+      "char_bound_height": 28
+    },
+    {
+      "layer": 1,
+      "chars": " .,-_^'",
+      "font": "C:/Windows/Fonts/arial.ttf",
+      "font_size": 24,
+      "char_bound_width": 24,
+      "char_bound_height": 28,
+      "override_widths": [
+        {
+          "char": " ",
+          "width": 6
+        },
+        {
+          "char": ".",
+          "width": -1
+        },
+        {
+          "char": ",",
+          "width": -1
+        },
+        {
+          "char": "-",
+          "width": -1
+        },
+        {
+          "char": "_",
+          "width": 0
+        },
+        {
+          "char": "^",
+          "width": 0
+        },
+        {
+          "char": "'",
+          "width": -1
+        }
+      ],
+      "override_weights": [
+        {
+          "char": " ",
+          "weight":-10000
+        }
+      ]
+    },
+    {
+      "layer": 2,
+      "chars": " :;!i",
+      "font": "C:/Windows/Fonts/arial.ttf",
+      "font_size": 24,
+      "char_bound_width": 24,
+      "char_bound_height": 28,
+      "override_widths": [
+        {
+          "char": " ",
+          "width": 6
+        },
+        {
+          "char": ":",
+          "width": -1
+        },
+        {
+          "char": ";",
+          "width": -1
+        },
+        {
+          "char": "!",
+          "width": -1
+        },
+        {
+          "char": "i",
+          "width": -1
+        }
+      ],
+      "override_weights": [
+        {
+          "char": " ",
+          "weight":-10000
+        }
+      ]
+    },
+    {
+      "layer": 3,
+      "chars": " +=*l[]~",
+      "font": "C:/Windows/Fonts/arial.ttf",
+      "font_size": 24,
+      "char_bound_width": 24,
+      "char_bound_height": 28,
+      "override_widths": [
+        {
+          "char": " ",
+          "width": 6
+        },
+        {
+          "char": "+",
+          "width": 0
+        },
+        {
+          "char": "=",
+          "width": 0
+        },
+        {
+          "char": "*",
+          "width": 0
+        },
+        {
+          "char": "l",
+          "width": -1
+        },
+        {
+          "char": "[",
+          "width": -1
+        },
+        {
+          "char": "]",
+          "width": -1
+        },
+        {
+          "char": "~",
+          "width": 0
+        }
+      ],
+      "override_weights": [
+        {
+          "char": " ",
+          "weight":-10000
+        }
+      ]
+    },
+    {
+      "layer": 4,
+      "chars": " %&8B",
+      "font": "C:/Windows/Fonts/arial.ttf",
+      "font_size": 24,
+      "char_bound_width": 24,
+      "char_bound_height": 28,
+      "override_widths": [
+        {
+          "char": " ",
+          "width": 6
+        },
+        {
+          "char": "%",
+          "width": 0
+        },
+        {
+          "char": "&",
+          "width": 0
+        },
+        {
+          "char": "8",
+          "width": 0
+        },
+        {
+          "char": "B",
+          "width": 0
+        }
+      ],
+      "override_weights": [
+        {
+          "char": " ",
+          "weight":-10000
+        }
+      ]
+    },
+    {
+      "layer": 5,
+      "chars": " WM@$#",
+      "font": "C:/Windows/Fonts/arial.ttf",
+      "font_size": 24,
+      "char_bound_width": 24,
+      "char_bound_height": 28,
+      "override_widths": [
+        {
+          "char": " ",
+          "width": 6
+        },
+        {
+          "char": "W",
+          "width": 0
+        },
+        {
+          "char": "M",
+          "width": 0
+        },
+        {
+          "char": "@",
+          "width": 0
+        },
+        {
+          "char": "$",
+          "width": 0
+        },
+        {
+          "char": "#",
+          "width": 0
+        }
+      ],
+      "override_weights": [
+        {
+          "char": " ",
+          "weight":-10000
+        }
+      ]
+    }
+  ]
+}

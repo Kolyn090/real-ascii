@@ -1,5 +1,7 @@
 import os
 import sys
+
+import cv2
 import numpy as np
 
 from flow_writer import FlowWriter
@@ -49,11 +51,13 @@ class NonFixedWidthWriter:
         self._init_field_vars()
 
     def _init_field_vars(self):
+        # os.makedirs("jx_files", exist_ok=True)
+
         using_char_templates = []
         for i in range(len(self.palettes)):
             palette = self.palettes[i]
             gradient_img = self.gradient_imgs[i]
-            # gradient_img = invert_image(gradient_img)
+            gradient_img = invert_image(gradient_img)
             flow_writer = palette.create_flow_writer(self.max_workers, self.antialiasing)
 
             # Update layer weight
@@ -65,6 +69,8 @@ class NonFixedWidthWriter:
 
             img, p_cts = flow_writer.match(gradient_img)
             img = invert_image(img)
+
+            # cv2.imwrite(f"jx_files/flow_matched_{i}.png", img)
 
             for j in range(len(flow_writer.char_templates)):
                 ct = flow_writer.char_templates[j]
