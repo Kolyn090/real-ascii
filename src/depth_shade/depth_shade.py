@@ -3,7 +3,6 @@ import sys
 import cv2
 import time
 import argparse
-import numpy as np
 
 from gradient_writer import GradientWriter
 
@@ -13,9 +12,7 @@ from static import (resize_nearest_neighbor, resize_bilinear, invert_image,  # t
                     resize_exact)  # type: ignore
 from arg_util import ShadeArgUtil, ColorArgUtil, TraceArgUtil  # type: ignore
 from ascii_writer import AsciiWriter  # type: ignore
-from color_util import (reassign_positional_colors,  # type: ignore
-                        process_image_blocks_nonfixed_width, blend_pixels,  # type: ignore
-                        average_color_block, blend_ascii_with_color, copy_black_pixels)  # type: ignore
+from color_util import reassign_positional_colors  # type: ignore
 from palette_template import are_palettes_fixed_width, validate_palettes  # type: ignore
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../nonfixed_width')))
