@@ -172,6 +172,8 @@ class FlowWriter:
                 region = long_img[:, x:nx]
                 tile_crop = tile[:, :region.shape[1]]
 
+                # print(region.shape, tile_crop.shape, tile.shape)
+
                 c = 0
                 if self.flow_match_method == 'fast':
                     c = np.count_nonzero(region != tile_crop)
@@ -244,13 +246,14 @@ class FlowWriter:
             final_bound = (img.size[0], char_bound[1])
 
         template = np.array(img)
-        template = np_pad(template,
-                          top=self.pad_top,
-                          bottom=self.pad_bottom,
-                          left=self.pad_left,
-                          right=self.pad_right,
-                          color=255)
-        final_bound = (final_bound[0] + self.pad_left + self.pad_right, final_bound[1] + self.pad_top + self.pad_bottom)
+        # template = np_pad(template,
+        #                   top=self.pad_top,
+        #                   bottom=self.pad_bottom,
+        #                   left=self.pad_left,
+        #                   right=self.pad_right,
+        #                   color=255)
+        # print(f"Template shape: {template.shape}, Img shape: {img.size}")
+        final_bound = (final_bound[0] + self.pad_left + self.pad_right, final_bound[1])
         template_binary = to_binary_strong(template)
         template_small = template_binary
         template_small = to_binary_strong(template_small)
