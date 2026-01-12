@@ -12,7 +12,7 @@ def trace():
     # Draw contour
     subprocess.run([
         sys.executable,
-        "../trace/contour.py",
+        "../edge_trace/contour.py",
         "--image_path", "f_output/word.png",
         "--canny1_min", "180",
         "--canny1_max", "181",
@@ -31,13 +31,12 @@ def trace():
     # Draw trace ascii art
     subprocess.run([
         sys.executable,
-        "../trace/trace.py",
+        "../edge_trace/edge_trace.py",
         "--image_path", "./contour/contour_180_260.png",
         "--resize_method", "nearest_neighbor",
-        "--resize_factor", "4",
-        "--palette_path", "../../resource/palette_files/palette_braille.json",
-        "--match_method", "fast",
-        "--save_ascii"
+        "--resize_factor", "1",
+        "--palette_path", "../../resource/palette_files/palette_chars_consolab_fast.json",
+        "--match_method", "slow"
     ])
 
 def shade():
@@ -47,26 +46,33 @@ def shade():
 
     subprocess.run([
         sys.executable,
-        "../shade/shade.py",
-        "--image_path", "inverted_word.png",
-        "--palette_path", "../../resource/palette_files/palette_light2.json",
-        "--resize_factor", "2"
+        "../depth_shade/depth_shade.py",
+        "--image_path", "f_output/inverted_word.png",
+        "--palette_path", "../../resource/palette_files/palette_default_consolab_fast.json",
+        "--resize_factor", "2",
+        "--thresholds_gamma", "0.7",
+        "--char_weight_sum_factor", "50",
+        "--curr_layer_weight_factor", "150",
+        "--offset_mse_factor", "10",
+        "--coherence_score_factor", "5",
+        "--color_option", "original",
+        "--antialiasing"
     ])
 
 def main():
-    create_image()
+    # create_image()
     # trace()
-    # shade()
+    shade()
 
 def create_image():
     os.makedirs("f_output", exist_ok=True)
 
-    start = (0, 0)
-    bound = (1500, 616)
-    word = "abc\\/-#$$$@^"
+    start = (25, 0)
+    bound = (1460, 216)
+    word = "Real ASCII"
     # font_path = "C:/Windows/Fonts/ariblk.ttf"
-    font_path = "C:/Windows/Fonts/arial.ttf"
-    font_size = 24
+    font_path = "C:/Windows/Fonts/consolab.ttf"
+    font_size = 256
     font = ImageFont.truetype(font_path, font_size)
 
     img = Image.new("RGB", bound, "white")
