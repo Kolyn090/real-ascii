@@ -1,101 +1,13 @@
 {
-  "name": "palette_default_half_6_arial_fast",
+  "name": "palette_default_half_arial_fast",
   "templates": [
     {
       "layer": 0,
-      "chars": " ",
+      "chars": " +=*l[]~%&8BWM@$#",
       "font": "C:/Windows/Fonts/arial.ttf",
       "font_size": 12,
-      "char_bound_width": 3,
-      "char_bound_height": 14
-    },
-    {
-      "layer": 1,
-      "chars": " .,-_^'",
-      "font": "C:/Windows/Fonts/arial.ttf",
-      "font_size": 12,
-      "char_bound_width": 12,
-      "char_bound_height": 14,
-      "override_widths": [
-        {
-          "char": " ",
-          "width": 3
-        },
-        {
-          "char": ".",
-          "width": -1
-        },
-        {
-          "char": ",",
-          "width": -1
-        },
-        {
-          "char": "-",
-          "width": -1
-        },
-        {
-          "char": "_",
-          "width": 0
-        },
-        {
-          "char": "^",
-          "width": 0
-        },
-        {
-          "char": "'",
-          "width": -1
-        }
-      ],
-      "override_weights": [
-        {
-          "char": " ",
-          "weight":-10000
-        }
-      ]
-    },
-    {
-      "layer": 2,
-      "chars": " :;!i",
-      "font": "C:/Windows/Fonts/arial.ttf",
-      "font_size": 12,
-      "char_bound_width": 12,
-      "char_bound_height": 14,
-      "override_widths": [
-        {
-          "char": " ",
-          "width": 3
-        },
-        {
-          "char": ":",
-          "width": -1
-        },
-        {
-          "char": ";",
-          "width": -1
-        },
-        {
-          "char": "!",
-          "width": -1
-        },
-        {
-          "char": "i",
-          "width": -1
-        }
-      ],
-      "override_weights": [
-        {
-          "char": " ",
-          "weight":-10000
-        }
-      ]
-    },
-    {
-      "layer": 3,
-      "chars": " +=*l[]~",
-      "font": "C:/Windows/Fonts/arial.ttf",
-      "font_size": 12,
-      "char_bound_width": 12,
-      "char_bound_height": 14,
+      "char_bound_width": 14,
+      "char_bound_height": 16,
       "override_widths": [
         {
           "char": " ",
@@ -103,15 +15,15 @@
         },
         {
           "char": "+",
-          "width": 0
+          "width": -1
         },
         {
           "char": "=",
-          "width": 0
+          "width": -1
         },
         {
           "char": "*",
-          "width": 0
+          "width": -1
         },
         {
           "char": "l",
@@ -127,83 +39,43 @@
         },
         {
           "char": "~",
-          "width": 0
-        }
-      ],
-      "override_weights": [
-        {
-          "char": " ",
-          "weight":-10000
-        }
-      ]
-    },
-    {
-      "layer": 4,
-      "chars": " %&8B",
-      "font": "C:/Windows/Fonts/arial.ttf",
-      "font_size": 12,
-      "char_bound_width": 12,
-      "char_bound_height": 14,
-      "override_widths": [
-        {
-          "char": " ",
-          "width": 3
+          "width": -1
         },
         {
           "char": "%",
-          "width": 0
+          "width": -1
         },
         {
           "char": "&",
-          "width": 0
+          "width": -1
         },
         {
           "char": "8",
-          "width": 0
+          "width": -1
         },
         {
           "char": "B",
-          "width": 0
-        }
-      ],
-      "override_weights": [
-        {
-          "char": " ",
-          "weight":-10000
-        }
-      ]
-    },
-    {
-      "layer": 5,
-      "chars": " WM@$#",
-      "font": "C:/Windows/Fonts/arial.ttf",
-      "font_size": 12,
-      "char_bound_width": 12,
-      "char_bound_height": 14,
-      "override_widths": [
-        {
-          "char": " ",
-          "width": 3
+          "width": -1
         },
         {
           "char": "W",
-          "width": 0
+          "width": -1
         },
         {
           "char": "M",
-          "width": 0
+          "width": -1
         },
         {
           "char": "@",
-          "width": 0
+          "width": -1
         },
         {
           "char": "$",
-          "width": 0
+          "width": -1
         },
         {
           "char": "#",
-          "width": 0
+          "width": -1
         }
       ],
       "override_weights": [

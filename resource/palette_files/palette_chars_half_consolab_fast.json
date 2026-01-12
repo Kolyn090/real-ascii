@@ -1,13 +1,13 @@
 {
-  "name": "palette_chars_consolab_fast",
+  "name": "palette_chars_half_consolab_fast",
   "templates": [
     {
       "layer": 0,
-      "chars": ".,:;!'\"-+_=|[]{}<>",
+      "chars": ".,:;!'+=*l[]~%&8BWM@$#",
       "font": "C:/Windows/Fonts/consolab.ttf",
-      "font_size": 24,
-      "char_bound_width": 13,
-      "char_bound_height": 22
+      "font_size": 12,
+      "char_bound_width": 6,
+      "char_bound_height": 12
     }
   ]
 }

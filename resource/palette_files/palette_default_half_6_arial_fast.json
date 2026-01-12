@@ -1,25 +1,25 @@
 {
-  "name": "palette_test_6_arial_fast",
+  "name": "palette_default_half_6_arial_fast",
   "templates": [
     {
       "layer": 0,
       "chars": " ",
       "font": "C:/Windows/Fonts/arial.ttf",
-      "font_size": 24,
-      "char_bound_width": 6,
-      "char_bound_height": 28
+      "font_size": 12,
+      "char_bound_width": 3,
+      "char_bound_height": 14
     },
     {
       "layer": 1,
       "chars": " .,-_^'",
       "font": "C:/Windows/Fonts/arial.ttf",
-      "font_size": 24,
-      "char_bound_width": 24,
-      "char_bound_height": 28,
+      "font_size": 12,
+      "char_bound_width": 12,
+      "char_bound_height": 14,
       "override_widths": [
         {
           "char": " ",
-          "width": 6
+          "width": 3
         },
         {
           "char": ".",
@@ -57,13 +57,13 @@
       "layer": 2,
       "chars": " :;!i",
       "font": "C:/Windows/Fonts/arial.ttf",
-      "font_size": 24,
-      "char_bound_width": 24,
-      "char_bound_height": 28,
+      "font_size": 12,
+      "char_bound_width": 12,
+      "char_bound_height": 14,
       "override_widths": [
         {
           "char": " ",
-          "width": 6
+          "width": 3
         },
         {
           "char": ":",
@@ -93,13 +93,13 @@
       "layer": 3,
       "chars": " +=*l[]~",
       "font": "C:/Windows/Fonts/arial.ttf",
-      "font_size": 24,
-      "char_bound_width": 24,
-      "char_bound_height": 28,
+      "font_size": 12,
+      "char_bound_width": 12,
+      "char_bound_height": 14,
       "override_widths": [
         {
           "char": " ",
-          "width": 6
+          "width": 3
         },
         {
           "char": "+",
@@ -141,13 +141,13 @@
       "layer": 4,
       "chars": " %&8B",
       "font": "C:/Windows/Fonts/arial.ttf",
-      "font_size": 24,
-      "char_bound_width": 24,
-      "char_bound_height": 28,
+      "font_size": 12,
+      "char_bound_width": 12,
+      "char_bound_height": 14,
       "override_widths": [
         {
           "char": " ",
-          "width": 6
+          "width": 3
         },
         {
           "char": "%",
@@ -177,13 +177,13 @@
       "layer": 5,
       "chars": " WM@$#",
       "font": "C:/Windows/Fonts/arial.ttf",
-      "font_size": 24,
-      "char_bound_width": 24,
-      "char_bound_height": 28,
+      "font_size": 12,
+      "char_bound_width": 12,
+      "char_bound_height": 14,
       "override_widths": [
         {
           "char": " ",
-          "width": 6
+          "width": 3
         },
         {
           "char": "W",
