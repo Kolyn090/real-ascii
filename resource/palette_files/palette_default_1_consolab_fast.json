@@ -1,0 +1,14 @@
+{
+  "name": "palette_default_1_consolab_fast",
+  "templates": [
+    {
+      "layer": 0,
+      "chars": " .,-_^':;!i+=*l[]~%&8BWM@$#",
+      "font": "C:/Windows/Fonts/consolab.ttf",
+      "font_size": 24,
+      "char_bound_width": 13,
+      "char_bound_height": 22,
+      "match_method": "fast"
+    }
+  ]
+}

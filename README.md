@@ -51,14 +51,14 @@
 ### Original
 
 <p align="center">
-  <img src="resource/imgs/turing.jpg" width="200">
+  <img src="resource/imgs/sunflower.jpg" width="200">
 </p>
 
 ### Filters Preview
 
-| Edge Trace                                                          | Depth Shade                                                         | Contour Shade                                                         |
-|---------------------------------------------------------------------|---------------------------------------------------------------------|-----------------------------------------------------------------------|
-| <img src="resource/readme_imgs/main_turing_trace.png" width="100%"> | <img src="resource/readme_imgs/main_turing_shade.png" width="100%"> | <img src="resource/readme_imgs/main_turing_contour.png" width="100%"> |
+| Edge Trace                                                             | Depth Shade                                                            | Contour Shade                                                            |
+|------------------------------------------------------------------------|------------------------------------------------------------------------|--------------------------------------------------------------------------|
+| <img src="resource/readme_imgs/main_sunflower_trace.png" width="100%"> | <img src="resource/readme_imgs/main_sunflower_shade.png" width="100%"> | <img src="resource/readme_imgs/main_sunflower_contour.png" width="100%"> |
 
 ---
 
@@ -123,4 +123,4 @@ Shade around the edges.
 * tsunami by hokusai (Wikipedia)
 * monalisa by Leonardo da Vinci (Wikipedia)
 * [flamingo](https://pin.it/N40Wiy6zx)
-* [Alan Turing](https://m.media-amazon.com/images/M/MV5BMDBkYjhmODYtNDc5Yy00NjVjLTliMWUtOTAyYjQyYjlhMTc4XkEyXkFqcGc@.jpg)
+* [sunflower](https://pin.it/tcKqTUF4G)
